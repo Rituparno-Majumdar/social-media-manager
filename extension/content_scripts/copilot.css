@@ -1,0 +1,208 @@
+#socialcraft-copilot-container {
+    all: initial; /* Completely resets browser and page inheritance inside this panel */
+    box-sizing: border-box !important;
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 330px !important;
+    max-width: 90vw !important;
+    background: rgba(13, 14, 25, 0.88) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 16px !important;
+    padding: 16px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(125, 95, 255, 0.15) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    color: #f3f4f6 !important;
+    z-index: 2147483647 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    transition: opacity 0.25s ease, transform 0.25s ease !important;
+    animation: socialcraft-slide-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
+}
+
+#socialcraft-copilot-container * {
+    box-sizing: border-box !important;
+    font-family: inherit !important;
+}
+
+@keyframes socialcraft-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.socialcraft-fade-out {
+    opacity: 0 !important;
+    transform: translateY(-10px) scale(0.95) !important;
+}
+
+.socialcraft-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    padding-bottom: 8px !important;
+    width: 100% !important;
+}
+
+.socialcraft-logo {
+    font-size: 20px !important;
+    animation: socialcraft-float 3s ease-in-out infinite !important;
+}
+
+@keyframes socialcraft-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.socialcraft-title {
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    color: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.3px !important;
+    background: linear-gradient(135deg, #7d5fff, #3ae374) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.socialcraft-subtitle {
+    font-size: 10px !important;
+    color: #a4b0be !important;
+    margin: 2px 0 0 0 !important;
+    padding: 0 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.socialcraft-close-btn {
+    border: none !important;
+    background: none !important;
+    color: #a4b0be !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+    padding: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: color 0.15s ease !important;
+}
+
+.socialcraft-close-btn:hover {
+    color: #ff4757 !important;
+}
+
+.socialcraft-body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    width: 100% !important;
+}
+
+.socialcraft-label {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    color: #747d8c !important;
+    text-transform: uppercase !important;
+    margin: 0 0 2px 0 !important;
+}
+
+.socialcraft-preview-box {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+    padding: 10px 12px !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    color: #e4e7eb !important;
+    max-height: 120px !important;
+    overflow-y: auto !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    text-align: left !important;
+}
+
+/* Custom Scrollbar for preview box */
+.socialcraft-preview-box::-webkit-scrollbar {
+    width: 4px !important;
+}
+.socialcraft-preview-box::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+.socialcraft-preview-box::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 2px !important;
+}
+
+.socialcraft-hint {
+    font-size: 10px !important;
+    color: #747d8c !important;
+    margin: 4px 0 0 0 !important;
+    line-height: 1.4 !important;
+    text-align: left !important;
+}
+
+.socialcraft-hint strong {
+    color: #3ae374 !important;
+    font-weight: 700 !important;
+}
+
+.socialcraft-footer {
+    display: flex !important;
+    gap: 8px !important;
+    margin-top: 4px !important;
+    width: 100% !important;
+}
+
+.socialcraft-btn {
+    flex: 1 !important;
+    padding: 10px 12px !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    border: none !important;
+    transition: all 0.15s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+}
+
+.socialcraft-btn.primary {
+    background: linear-gradient(135deg, #7d5fff, #673ab7) !important;
+    color: white !important;
+}
+
+.socialcraft-btn.primary:hover {
+    box-shadow: 0 0 15px rgba(125, 95, 255, 0.4) !important;
+    transform: translateY(-1px) !important;
+}
+
+.socialcraft-btn.secondary {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    color: #e4e7eb !important;
+}
+
+.socialcraft-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.14) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.socialcraft-btn.success-flash {
+    background: #2ed573 !important;
+    color: white !important;
+    box-shadow: 0 0 15px rgba(46, 213, 115, 0.4) !important;
+}

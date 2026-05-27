@@ -884,6 +884,63 @@
         }
 
         /* ========================================
+           EXTENSION STATUS BADGES
+           ======================================== */
+        .extension-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all var(--transition-normal);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .extension-badge.connected {
+            border-color: rgba(46, 213, 115, 0.3) !important;
+            background: rgba(46, 213, 115, 0.08) !important;
+            color: #2ed573 !important;
+            box-shadow: 0 0 10px rgba(46, 213, 115, 0.1);
+        }
+
+        .extension-badge.offline {
+            border-color: rgba(255, 255, 255, 0.05) !important;
+            background: rgba(255, 255, 255, 0.02) !important;
+            color: var(--text-tertiary) !important;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all var(--transition-normal);
+        }
+
+        .extension-badge.connected .badge-dot {
+            background: #2ed573 !important;
+            box-shadow: 0 0 8px #2ed573;
+            animation: pulse-dot 1.8s infinite;
+        }
+
+        .extension-badge.offline .badge-dot {
+            background: #a4b0be !important;
+        }
+
+        @keyframes pulse-dot {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        /* ========================================
            SETTINGS MODAL
            ======================================== */
         .modal-overlay {
@@ -1303,6 +1360,44 @@
         </div>
     </div>
 
+    <!-- Copilot Info Modal -->
+    <div class="modal-overlay" id="copilotModal">
+        <div class="modal-content" role="dialog" aria-labelledby="copilotModalTitle" style="max-width: 500px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <h2 class="modal-title" id="copilotModalTitle">🚀 Browser Copilot</h2>
+                <button class="icon-btn" onclick="toggleCopilotModal()" aria-label="Close copilot modal">✕</button>
+            </div>
+            <p class="modal-subtitle">Publish to Facebook, Instagram, LinkedIn, and more in 1-Click for FREE!</p>
+
+            <div class="setup-guide" style="text-align: left; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); padding: 16px; border-radius: 12px; margin-top: 15px;">
+                <h4 style="margin-bottom: 12px; color: var(--accent-secondary); font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                    <span>📲</span> How to Install & Connect (Cross-Browser)
+                </h4>
+                <ol style="margin-left: 20px; line-height: 1.6; font-size: 13px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px;">
+                    <li>Open your browser's extension manager:
+                        <ul style="margin-left: 15px; margin-top: 4px; list-style-type: circle;">
+                            <li><strong>Chrome/Brave/Edge:</strong> Go to <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">chrome://extensions</code></li>
+                            <li><strong>Firefox:</strong> Go to <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">about:debugging</code> &rarr; "This Firefox"</li>
+                            <li><strong>Safari:</strong> Build with Xcode (<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">safari-web-extension-converter extension</code>)</li>
+                        </ul>
+                    </li>
+                    <li>Enable <strong>Developer Mode</strong> (toggle in top-right or settings)</li>
+                    <li>Click <strong>"Load Unpacked"</strong> (or "Load Temporary Add-on" in Firefox)</li>
+                    <li>Select this folder: <br>
+                        <code style="display: block; font-family: monospace; background: rgba(0, 0, 0, 0.3); padding: 6px 10px; border-radius: 6px; margin-top: 5px; font-size: 11px; word-break: break-all; color: #a4b0be; user-select: all;">/Users/pari/Documents/GITPROJECTS/social-craft-ai/extension</code>
+                    </li>
+                </ol>
+                <div style="margin-top: 15px; background: rgba(125, 95, 255, 0.08); border-left: 3px solid #7d5fff; padding: 10px; border-radius: 4px; font-size: 12px; color: var(--text-secondary); line-height: 1.4;">
+                    <strong>✨ Safe & Private:</strong> The extension is completely serverless, runs fully in your own browser, and never tracks your passwords, credentials, or personal data.
+                </div>
+            </div>
+
+            <div class="modal-actions" style="margin-top: 20px; justify-content: flex-end;">
+                <button class="action-btn primary" onclick="toggleCopilotModal()">Got It, Let's Go!</button>
+            </div>
+        </div>
+    </div>
+
     <!-- History Drawer -->
     <div class="history-drawer-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
     <div class="history-drawer" id="historyDrawer">
@@ -1317,7 +1412,11 @@
     <div class="app-container">
         <!-- Header -->
         <header class="header">
-            <div class="header-controls">
+            <div class="header-controls" style="display: flex; align-items: center; gap: 8px;">
+                <div id="headerExtensionBadge" class="extension-badge offline" onclick="toggleCopilotModal()" style="cursor: pointer;" title="SocialCraft Copilot Status — Click to setup">
+                    <span class="badge-dot"></span>
+                    <span class="badge-text" style="font-size: 10px;">Copilot Offline</span>
+                </div>
                 <button class="icon-btn" onclick="toggleHistory()" aria-label="View post history" title="Post History">📜</button>
                 <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Theme" id="themeToggleBtn">🌙</button>
                 <button class="icon-btn" onclick="toggleSettings()" aria-label="API Settings" title="Settings">⚙️</button>
@@ -1465,11 +1564,17 @@
         <!-- Section 4: Output -->
         <section class="output-section" id="outputSection">
             <div class="card" style="padding-bottom:20px;">
-                <div class="card-header">
-                    <div class="card-icon">🎉</div>
-                    <div>
-                        <h2 class="card-title">Your Generated Post</h2>
-                        <p class="card-description">Ready to copy and share!</p>
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="card-icon">🎉</div>
+                        <div>
+                            <h2 class="card-title">Your Generated Post</h2>
+                            <p class="card-description">Ready to copy and share!</p>
+                        </div>
+                    </div>
+                    <div id="outputExtensionBadge" class="extension-badge offline" onclick="toggleCopilotModal()" style="cursor: pointer;" title="SocialCraft Copilot Status — Click to setup">
+                        <span class="badge-dot"></span>
+                        <span class="badge-text">Copilot Offline</span>
                     </div>
                 </div>
 
@@ -1496,6 +1601,7 @@
 
                 <div class="output-actions">
                     <button class="action-btn primary" onclick="quickPost()" id="quickPostBtn">🚀 Quick-Post to Platform</button>
+                    <button class="action-btn success-flash" onclick="publishAllCampaign()" id="publishAllBtn" style="background: linear-gradient(135deg, #2ed573, #26af5f) !important; border-color: #2ed573 !important; display: inline-flex;">🚀 1-Click Publish All</button>
                     <button class="action-btn" onclick="sharePostMobile()" id="shareMobileBtn" style="display:none;">📲 Share via Apps</button>
                     <button class="action-btn" onclick="copyPost()" id="copyBtn">📋 Copy Post</button>
                     <button class="action-btn" onclick="toggleEdit()" id="editBtn">✏️ Edit</button>
@@ -1860,6 +1966,7 @@ SEO FOR TELEGRAM:
             setupParticles();
             renderHistory();
             updateSteps();
+            startExtensionDetection();
         }
 
         // ============================================
@@ -2886,6 +2993,90 @@ IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-comme
         };
 
         // ============================================
+        // COPILOT MODAL & PUBLISH ALL CAMPAIGN
+        // ============================================
+        window.toggleCopilotModal = function() {
+            const modal = document.getElementById('copilotModal');
+            modal.classList.toggle('visible');
+        };
+
+        window.publishAllCampaign = function() {
+            const isExtensionActive = document.documentElement.getAttribute('data-socialcraft-extension-active') === 'true';
+            if (!isExtensionActive) {
+                toggleCopilotModal();
+                showToast('🔌 Please install & connect the Copilot extension first!');
+                return;
+            }
+
+            const selected = state.selectedPlatforms;
+            const posts = state.generatedPosts;
+
+            if (!selected || selected.length === 0) {
+                showToast('⚠️ No generated posts found!', 'error');
+                return;
+            }
+
+            showToast('⚡ Relaying campaign to Copilot...');
+
+            window.postMessage({
+                type: 'SOCIALCRAFT_PUBLISH_ALL',
+                posts: posts,
+                platforms: selected
+            }, '*');
+        };
+
+        // Regularly poll the extension bridge status to show/hide/badge the status dynamically
+        function startExtensionDetection() {
+            setInterval(() => {
+                const isActive = document.documentElement.getAttribute('data-socialcraft-extension-active') === 'true';
+                
+                const headerBadge = document.getElementById('headerExtensionBadge');
+                const outputBadge = document.getElementById('outputExtensionBadge');
+                const publishAllBtn = document.getElementById('publishAllBtn');
+
+                if (isActive) {
+                    // Update header badge
+                    if (headerBadge) {
+                        headerBadge.className = 'extension-badge connected';
+                        headerBadge.querySelector('.badge-text').textContent = 'Copilot Connected';
+                        headerBadge.title = 'SocialCraft Copilot is Connected & Active!';
+                    }
+                    // Update output badge
+                    if (outputBadge) {
+                        outputBadge.className = 'extension-badge connected';
+                        outputBadge.querySelector('.badge-text').textContent = 'Copilot Active';
+                        outputBadge.title = 'SocialCraft Copilot is Connected & Active!';
+                    }
+                    // Style the publish all button as premium active green
+                    if (publishAllBtn) {
+                        publishAllBtn.style.background = 'linear-gradient(135deg, #2ed573, #26af5f) !important';
+                        publishAllBtn.style.borderColor = '#2ed573 !important';
+                        publishAllBtn.innerHTML = '⚡ 1-Click Publish All';
+                    }
+                } else {
+                    // Update header badge
+                    if (headerBadge) {
+                        headerBadge.className = 'extension-badge offline';
+                        headerBadge.querySelector('.badge-text').textContent = 'Copilot Offline';
+                        headerBadge.title = 'SocialCraft Copilot is Offline — Click to install';
+                    }
+                    // Update output badge
+                    if (outputBadge) {
+                        outputBadge.className = 'extension-badge offline';
+                        outputBadge.querySelector('.badge-text').textContent = 'Copilot Offline';
+                        outputBadge.title = 'SocialCraft Copilot is Offline — Click to install';
+                    }
+                    // Style the publish all button as warning yellow/grey-ish triggers modal
+                    if (publishAllBtn) {
+                        publishAllBtn.style.background = 'rgba(255,255,255,0.05) !important';
+                        publishAllBtn.style.borderColor = 'rgba(255,255,255,0.1) !important';
+                        publishAllBtn.innerHTML = '🔌 Install Copilot';
+                    }
+                }
+            }, 1000);
+        }
+
+        // ============================================
         // SETTINGS MODAL
         // ============================================
         window.toggleSettings = function() {
@@ -3080,11 +3271,15 @@ IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-comme
         document.getElementById('settingsModal').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) toggleSettings();
         });
+        document.getElementById('copilotModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) toggleCopilotModal();
+        });
 
         // Close modal on Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 document.getElementById('settingsModal').classList.remove('visible');
+                document.getElementById('copilotModal').classList.remove('visible');
                 document.getElementById('historyDrawer').classList.remove('visible');
                 document.getElementById('historyOverlay').classList.remove('visible');
             }
