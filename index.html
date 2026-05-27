@@ -474,11 +474,156 @@
         }
 
         /* ========================================
-           PLATFORM SELECTOR
+           PLATFORM SELECTOR (MULTI-SELECT GRID)
            ======================================== */
-        .platform-select-wrapper { position: relative; }
+        .platforms-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
 
-        .platform-option { display: flex; align-items: center; gap: 8px; }
+        .platforms-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .platforms-actions button {
+            padding: 6px 12px;
+            font-size: 11px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+        }
+
+        .platforms-actions button:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+            gap: 10px;
+        }
+
+        .platform-card {
+            position: relative;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+        }
+
+        .platform-card:hover {
+            background: var(--bg-surface-hover);
+            border-color: var(--border-glass);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .platform-card.selected {
+            background: var(--accent-primary-glow);
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+            box-shadow: 0 0 15px var(--accent-primary-glow);
+        }
+
+        .platform-card input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0; width: 0;
+        }
+
+        .platform-card-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1.5px solid var(--text-tertiary);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all var(--transition-fast);
+        }
+
+        .platform-card.selected .platform-card-checkbox {
+            border-color: var(--accent-primary);
+            background: var(--accent-primary);
+        }
+
+        .platform-card.selected .platform-card-checkbox::after {
+            content: "✓";
+            color: white;
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        /* ========================================
+           PROGRESS PANEL (PARALLEL GENERATION)
+           ======================================== */
+        .progress-panel {
+            margin-top: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: left;
+            animation: slideUp 0.3s ease;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .progress-item-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-item-status {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .progress-item.done .progress-item-status {
+            color: var(--success);
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        .progress-item.error .progress-item-status {
+            color: var(--error);
+            font-weight: 600;
+            font-style: normal;
+        }
 
         /* ========================================
            GENERATE BUTTON
@@ -558,6 +703,47 @@
         }
 
         .output-section.visible { display: block; }
+
+        /* Output Tabs Dashboard styling */
+        .output-tabs {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-glass);
+            scrollbar-width: thin;
+        }
+
+        .output-tab {
+            padding: 10px 18px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: none;
+        }
+
+        .output-tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-surface-hover);
+        }
+
+        .output-tab.active {
+            color: var(--text-primary);
+            background: var(--bg-surface-glass);
+            border-color: var(--accent-primary) var(--border-glass) transparent var(--border-glass);
+            border-top: 2.5px solid var(--accent-primary);
+            box-shadow: inset 0 2.5px 0 var(--accent-primary);
+        }
 
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -1257,23 +1443,13 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="platformSelect"><span class="label-icon">📱</span> Social Media Platform</label>
-                <select id="platformSelect">
-                    <option value="">— Select a platform —</option>
-                    <option value="facebook">📘 Facebook</option>
-                    <option value="instagram">📸 Instagram</option>
-                    <option value="twitter">🐦 Twitter / X</option>
-                    <option value="linkedin">💼 LinkedIn</option>
-                    <option value="whatsapp">💬 WhatsApp Status</option>
-                    <option value="youtube">▶️ YouTube Community</option>
-                    <option value="sharechat">🟠 ShareChat</option>
-                    <option value="threads">🔗 Threads</option>
-                    <option value="pinterest">📌 Pinterest</option>
-                    <option value="telegram">✈️ Telegram Channel</option>
-                </select>
+                <label class="form-label"><span class="label-icon">📱</span> Target Social Media Platforms</label>
+                <div class="platforms-container" id="platformsContainer">
+                    <!-- Dynamically populated by JS init() -->
+                </div>
             </div>
 
-            <div id="platformInfo" style="font-size:12px; color:var(--text-tertiary); margin-top:8px; min-height:18px;"></div>
+            <div id="platformInfo" style="font-size:12px; color:var(--text-tertiary); margin-top:8px; min-height:18px;">Select at least one platform to generate posts.</div>
 
             <button class="generate-btn" id="generateBtn" onclick="generatePost()" disabled>
                 <span class="btn-content">
@@ -1297,6 +1473,8 @@
                     </div>
                 </div>
 
+                <div class="output-tabs" id="outputTabs"></div>
+
                 <div class="platform-preview" id="platformPreview">
                     <div class="preview-header" id="previewHeader">
                         <span class="platform-icon-lg" id="previewPlatformIcon"></span>
@@ -1317,10 +1495,12 @@
                 </div>
 
                 <div class="output-actions">
-                    <button class="action-btn primary" onclick="copyPost()" id="copyBtn">📋 Copy to Clipboard</button>
-                    <button class="action-btn" onclick="regeneratePost()">🔄 Regenerate</button>
+                    <button class="action-btn primary" onclick="quickPost()" id="quickPostBtn">🚀 Quick-Post to Platform</button>
+                    <button class="action-btn" onclick="sharePostMobile()" id="shareMobileBtn" style="display:none;">📲 Share via Apps</button>
+                    <button class="action-btn" onclick="copyPost()" id="copyBtn">📋 Copy Post</button>
                     <button class="action-btn" onclick="toggleEdit()" id="editBtn">✏️ Edit</button>
                     <button class="action-btn" onclick="downloadPost()">💾 Download</button>
+                    <button class="action-btn" onclick="regeneratePost()">🔄 Regenerate</button>
                 </div>
             </div>
         </section>
@@ -1639,8 +1819,10 @@ SEO FOR TELEGRAM:
         // ============================================
         let state = {
             photos: [],          // { file, dataUrl, base64 }
-            generatedPost: '',
-            currentPlatform: '',
+            generatedPost: '',   // Text of the currently active platform preview
+            generatedPosts: {},  // Object holding drafts for all generated platforms: { facebook: '...', twitter: '...' }
+            selectedPlatforms: [], // Array of keys for platforms selected for this generation
+            currentPlatform: '',  // Key of the currently active platform tab in output view
             isEditing: false,
             apiKey: localStorage.getItem('gemini_api_key') || '',
             history: JSON.parse(localStorage.getItem('post_history') || '[]'),
@@ -1668,6 +1850,9 @@ SEO FOR TELEGRAM:
             const now = new Date();
             document.getElementById('eventTime').value =
                 String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+            // Render Platform Selector checkboxes
+            renderPlatformSelector();
 
             // Setup event listeners
             setupPhotoUpload();
@@ -1698,9 +1883,47 @@ SEO FOR TELEGRAM:
             input.addEventListener('change', (e) => handleFiles(e.target.files));
         }
 
+        function compressImage(file, maxWidth = 1200, maxHeight = 1200, quality = 0.85) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth || height > maxHeight) {
+                            if (width > height) {
+                                height = Math.round((height * maxWidth) / width);
+                                width = maxWidth;
+                            } else {
+                                width = Math.round((width * maxHeight) / height);
+                                height = maxHeight;
+                            }
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        const base64 = dataUrl.split(',')[1];
+                        resolve({ dataUrl, base64, mimeType: 'image/jpeg' });
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
+        }
+
         async function handleFiles(files) {
             const maxFiles = 5;
-            const maxSize = 5 * 1024 * 1024; // 5MB
+            const maxSize = 20 * 1024 * 1024; // 20MB max raw upload size, since we compress client-side!
             const allowed = ['image/jpeg', 'image/png', 'image/webp'];
 
             for (const file of files) {
@@ -1713,25 +1936,29 @@ SEO FOR TELEGRAM:
                     continue;
                 }
                 if (file.size > maxSize) {
-                    showToast(`❌ ${file.name} — exceeds 5 MB`, 'error');
+                    showToast(`❌ ${file.name} — exceeds 20 MB limit`, 'error');
                     continue;
                 }
 
-                const dataUrl = await readFileAsDataUrl(file);
-                const base64 = dataUrl.split(',')[1];
-                state.photos.push({ file, dataUrl, base64, mimeType: file.type });
+                try {
+                    if (file.size > 1 * 1024 * 1024) {
+                        showToast(`⚡ Optimizing ${file.name} to speed up AI...`);
+                    }
+                    const compressed = await compressImage(file);
+                    state.photos.push({ 
+                        file, 
+                        dataUrl: compressed.dataUrl, 
+                        base64: compressed.base64, 
+                        mimeType: compressed.mimeType 
+                    });
+                } catch (err) {
+                    console.error('Image compression error:', err);
+                    showToast(`❌ Failed to optimize ${file.name}`, 'error');
+                }
             }
 
             renderPhotos();
             updateSteps();
-        }
-
-        function readFileAsDataUrl(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.readAsDataURL(file);
-            });
         }
 
         function renderPhotos() {
@@ -1757,27 +1984,103 @@ SEO FOR TELEGRAM:
         // ============================================
         // FORM VALIDATION & STEP TRACKING
         // ============================================
-        function setupFormValidation() {
-            const fields = ['eventDate', 'eventTime', 'eventVenue', 'eventDescription', 'platformSelect'];
-            fields.forEach(id => {
-                document.getElementById(id).addEventListener('input', () => {
-                    updateSteps();
-                    validateGenerate();
-                });
-                document.getElementById(id).addEventListener('change', () => {
-                    updateSteps();
-                    validateGenerate();
-                });
-            });
+        function renderPlatformSelector() {
+            const container = document.getElementById('platformsContainer');
+            container.innerHTML = `
+                <div class="platforms-actions">
+                    <button type="button" onclick="selectAllPlatforms()">✨ Select All</button>
+                    <button type="button" onclick="clearAllPlatforms()">🗑️ Clear All</button>
+                </div>
+                <div class="platforms-grid">
+                    ${Object.keys(PLATFORMS).map(key => {
+                        const p = PLATFORMS[key];
+                        return `
+                            <label class="platform-card" id="card-${key}">
+                                <input type="checkbox" class="platform-checkbox" value="${key}" id="cb-${key}" onchange="onPlatformChange('${key}')">
+                                <div class="platform-card-checkbox"></div>
+                                <span>${p.icon} ${p.name}</span>
+                            </label>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
 
-            // Platform info display
-            document.getElementById('platformSelect').addEventListener('change', (e) => {
-                const p = PLATFORMS[e.target.value];
-                const info = document.getElementById('platformInfo');
-                if (p) {
-                    info.innerHTML = `<strong>${p.icon} ${p.name}:</strong> ${p.charLimit.toLocaleString()} chars • ${p.hashtagRange} hashtags • ${p.tone.split(',')[0]} tone`;
-                } else {
-                    info.textContent = '';
+        window.getSelectedPlatforms = function() {
+            const checked = document.querySelectorAll('.platform-checkbox:checked');
+            return Array.from(checked).map(cb => cb.value);
+        };
+
+        window.onPlatformChange = function(key) {
+            const cb = document.getElementById(`cb-${key}`);
+            const card = document.getElementById(`card-${key}`);
+            if (cb.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+            updateSteps();
+            validateGenerate();
+            updatePlatformInfo();
+        };
+
+        window.selectAllPlatforms = function() {
+            Object.keys(PLATFORMS).forEach(key => {
+                const cb = document.getElementById(`cb-${key}`);
+                const card = document.getElementById(`card-${key}`);
+                if (cb && !cb.checked) {
+                    cb.checked = true;
+                    card.classList.add('selected');
+                }
+            });
+            updateSteps();
+            validateGenerate();
+            updatePlatformInfo();
+        };
+
+        window.clearAllPlatforms = function() {
+            Object.keys(PLATFORMS).forEach(key => {
+                const cb = document.getElementById(`cb-${key}`);
+                const card = document.getElementById(`card-${key}`);
+                if (cb && cb.checked) {
+                    cb.checked = false;
+                    card.classList.remove('selected');
+                }
+            });
+            updateSteps();
+            validateGenerate();
+            updatePlatformInfo();
+        };
+
+        function updatePlatformInfo() {
+            const selected = getSelectedPlatforms();
+            const info = document.getElementById('platformInfo');
+            if (selected.length === 0) {
+                info.textContent = 'Select at least one platform to generate posts.';
+                info.style.color = 'var(--text-tertiary)';
+            } else if (selected.length === 1) {
+                const p = PLATFORMS[selected[0]];
+                info.innerHTML = `<strong>${p.icon} ${p.name}:</strong> ${p.charLimit.toLocaleString()} chars • ${p.hashtagRange} hashtags • ${p.tone.split(',')[0]} tone`;
+                info.style.color = 'var(--text-secondary)';
+            } else {
+                info.innerHTML = `✨ Selected <strong>${selected.length} platforms</strong> for parallel AI generation.`;
+                info.style.color = 'var(--accent-secondary)';
+            }
+        }
+
+        function setupFormValidation() {
+            const fields = ['eventDate', 'eventTime', 'eventVenue', 'eventDescription'];
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => {
+                        updateSteps();
+                        validateGenerate();
+                    });
+                    el.addEventListener('change', () => {
+                        updateSteps();
+                        validateGenerate();
+                    });
                 }
             });
         }
@@ -1786,7 +2089,8 @@ SEO FOR TELEGRAM:
             const hasPhotos = state.photos.length > 0;
             const desc = document.getElementById('eventDescription').value.trim();
             const hasDetails = desc.length >= 10;
-            const hasPlatform = !!document.getElementById('platformSelect').value;
+            const selected = getSelectedPlatforms();
+            const hasPlatform = selected.length > 0;
 
             // Step 1
             const s1 = document.getElementById('step1Circle');
@@ -1812,9 +2116,10 @@ SEO FOR TELEGRAM:
 
         function validateGenerate() {
             const desc = document.getElementById('eventDescription').value.trim();
-            const platform = document.getElementById('platformSelect').value;
+            const selected = getSelectedPlatforms();
+            const hasPlatform = selected.length > 0;
             const btn = document.getElementById('generateBtn');
-            btn.disabled = !(desc.length >= 10 && platform && state.apiKey);
+            btn.disabled = !(desc.length >= 10 && hasPlatform && state.apiKey);
         }
 
         // ============================================
@@ -1841,7 +2146,15 @@ SEO FOR TELEGRAM:
                         console.log(`Attempting generation with model: ${model.id} (${retries} retries left)`);
                         const response = await ai.models.generateContent({
                             model: model.id,
-                            contents: contents
+                            contents: contents,
+                            config: {
+                                safetySettings: [
+                                    { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_ONLY_HIGH' },
+                                    { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_ONLY_HIGH' },
+                                    { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_ONLY_HIGH' },
+                                    { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_ONLY_HIGH' }
+                                ]
+                            }
                         });
                         if (response && response.text) {
                             return { response, modelUsed: model.name };
@@ -1889,10 +2202,54 @@ SEO FOR TELEGRAM:
         // ============================================
         // AI POST GENERATION
         // ============================================
+        // ============================================
+        // PROGRESS SHIELD (PARALLEL GENERATION UI)
+        // ============================================
+        function renderProgressPanel(platforms) {
+            const el = document.getElementById('loadingMsg');
+            el.style.display = 'block';
+            el.innerHTML = `
+                <div class="progress-panel">
+                    <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--accent-primary);">🧠 Generating Posts via AI...</h4>
+                    ${platforms.map(pKey => {
+                        const p = PLATFORMS[pKey];
+                        return `
+                            <div class="progress-item" id="progress-${pKey}">
+                                <span class="progress-item-name">${p.icon} ${p.name}</span>
+                                <span class="progress-item-status" id="status-${pKey}">⏳ Waiting to start...</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function updateProgressStatus(pKey, text, status = 'loading') {
+            const item = document.getElementById(`progress-${pKey}`);
+            const statusEl = document.getElementById(`status-${pKey}`);
+            if (!item || !statusEl) return;
+
+            if (status === 'loading') {
+                item.className = 'progress-item';
+                statusEl.innerHTML = `⏳ AI is writing (${text})...`;
+            } else if (status === 'done') {
+                item.className = 'progress-item done';
+                statusEl.innerHTML = `✅ Ready (${text})!`;
+            } else if (status === 'error') {
+                item.className = 'progress-item error';
+                statusEl.innerHTML = `❌ ${text}`;
+            }
+        }
+
+        // ============================================
+        // AI POST GENERATION (PARALLEL STAGGERED)
+        // ============================================
         window.generatePost = async function() {
-            const platform = document.getElementById('platformSelect').value;
-            const config = PLATFORMS[platform];
-            if (!config) return;
+            const selected = getSelectedPlatforms();
+            if (selected.length === 0) {
+                showToast('⚠️ Please select at least one platform.', 'warning');
+                return;
+            }
 
             const date = document.getElementById('eventDate').value;
             const time = document.getElementById('eventTime').value;
@@ -1904,30 +2261,17 @@ SEO FOR TELEGRAM:
             const btn = document.getElementById('generateBtn');
             btn.classList.add('loading');
             btn.disabled = true;
-            const loadingMsg = document.getElementById('loadingMsg');
-            loadingMsg.style.display = 'block';
 
-            let msgIndex = 0;
-            loadingMsg.textContent = LOADING_MESSAGES[0];
-            const msgInterval = setInterval(() => {
-                msgIndex = (msgIndex + 1) % LOADING_MESSAGES.length;
-                if (!loadingMsg.innerHTML.includes('Calling AI')) {
-                    loadingMsg.textContent = LOADING_MESSAGES[msgIndex];
-                }
-            }, 2500);
+            renderProgressPanel(selected);
 
             try {
                 const ai = new GoogleGenAI({ apiKey: state.apiKey });
+                state.generatedPosts = {}; // Clear old drafts
 
-                // Build the prompt
-                const prompt = buildPrompt(config, { date, time, venue, language, description });
-
-                // Build content parts (text + optional images)
-                const parts = [{ text: prompt }];
-
-                // Add images if available
+                // Get common photos base64 payload
+                const mediaParts = [];
                 for (const photo of state.photos) {
-                    parts.push({
+                    mediaParts.push({
                         inlineData: {
                             mimeType: photo.mimeType,
                             data: photo.base64
@@ -1935,43 +2279,74 @@ SEO FOR TELEGRAM:
                     });
                 }
 
-                // Call the robust API generation helper
-                const result = await callWithRetryAndFallback(ai, [{ role: 'user', parts }], (currentModelName) => {
-                    loadingMsg.innerHTML = `🤖 Calling AI using <strong>${currentModelName}</strong>...<br><span style="font-size: 0.85em; opacity: 0.8;">${LOADING_MESSAGES[msgIndex]}</span>`;
+                // Staggered parallel execution
+                const promises = selected.map(async (platformKey, index) => {
+                    // Stagger starting times by 1000ms to prevent API key congestion / spikes
+                    await new Promise(resolve => setTimeout(resolve, index * 1000));
+                    
+                    const config = PLATFORMS[platformKey];
+                    updateProgressStatus(platformKey, 'Gemini 2.5 Flash', 'loading');
+
+                    try {
+                        const prompt = buildPrompt(config, { date, time, venue, language, description });
+                        const parts = [{ text: prompt }, ...mediaParts];
+
+                        const result = await callWithRetryAndFallback(ai, [{ role: 'user', parts }], (currentModelName) => {
+                            updateProgressStatus(platformKey, currentModelName, 'loading');
+                        });
+
+                        const generatedText = result.response.text.trim();
+                        state.generatedPosts[platformKey] = generatedText;
+                        updateProgressStatus(platformKey, result.modelUsed, 'done');
+                        return { platformKey, text: generatedText, success: true };
+                    } catch (err) {
+                        console.error(`Generation failed for ${platformKey}:`, err);
+                        let errorMsg = 'Error';
+                        if (err.message?.includes('API_KEY_INVALID') || err.message?.includes('401')) {
+                            errorMsg = 'Invalid Key';
+                        } else if (err.message?.toLowerCase().includes('safety') || err.message?.toLowerCase().includes('block')) {
+                            errorMsg = 'Safety Blocked';
+                        } else if (err.message?.includes('503')) {
+                            errorMsg = 'Busy (503)';
+                        } else if (err.message?.includes('429') || err.message?.includes('quota') || err.message?.includes('exhausted')) {
+                            errorMsg = 'Rate Limit (429)';
+                        } else {
+                            errorMsg = err.message?.substring(0, 30) || 'Failed';
+                        }
+                        updateProgressStatus(platformKey, errorMsg, 'error');
+                        return { platformKey, error: err, success: false };
+                    }
                 });
 
-                const response = result.response;
-                const generatedText = response.text.trim();
-                state.generatedPost = generatedText;
-                state.currentPlatform = platform;
+                const results = await Promise.all(promises);
+                const successfulResults = results.filter(r => r.success);
 
-                // Save to history
-                saveToHistory(platform, generatedText, description);
+                if (successfulResults.length === 0) {
+                    throw new Error('All platform generations failed. Please check your API key or network.');
+                }
 
-                // Display result
-                displayOutput(platform, generatedText);
+                // Update active state
+                state.selectedPlatforms = successfulResults.map(r => r.platformKey);
+                state.currentPlatform = state.selectedPlatforms[0];
+                state.generatedPost = state.generatedPosts[state.currentPlatform];
 
-                showToast(`✅ Post generated successfully (via ${result.modelUsed})!`);
+                // Save to history (grouped format)
+                saveToHistoryGrouped(description);
+
+                // Render tabbed outputs dashboard
+                displayOutputGrouped();
+
+                showToast(`✅ Generated posts for ${successfulResults.length} platform(s)!`);
 
             } catch (err) {
-                console.error('Generation error:', err);
-                let errorMsg = 'Failed to generate post. ';
-                if (err.message?.includes('API_KEY_INVALID') || err.message?.includes('401')) {
-                    errorMsg += 'Your API key appears to be invalid. Please check it in Settings.';
-                } else if (err.message?.includes('503') || err.message?.includes('Service Unavailable')) {
-                    errorMsg += 'Gemini servers are currently overloaded (503). Please try again in a few moments.';
-                } else if (err.message?.includes('429') || err.message?.includes('quota') || err.message?.includes('exhausted')) {
-                    errorMsg += 'Rate limit reached. Please wait a moment and try again.';
-                } else if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
-                    errorMsg += 'Network error. Please check your internet connection.';
-                } else {
-                    errorMsg += err.message || 'Please try again.';
-                }
-                showToast('❌ ' + errorMsg, 'error');
+                console.error('Parallel generation error:', err);
+                showToast('❌ ' + (err.message || 'Generation failed.'), 'error');
             } finally {
-                clearInterval(msgInterval);
                 btn.classList.remove('loading');
-                loadingMsg.style.display = 'none';
+                // Auto-close progress list after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('loadingMsg').style.display = 'none';
+                }, 3000);
                 validateGenerate();
             }
         };
@@ -2143,6 +2518,18 @@ IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-comme
             state.isEditing = false;
             document.getElementById('editBtn').textContent = '✏️ Edit';
 
+            // Configure quick-post button
+            const quickBtn = document.getElementById('quickPostBtn');
+            if (quickBtn) {
+                quickBtn.textContent = `🚀 Post to ${config.name}`;
+            }
+
+            // Configure mobile sharing button
+            const shareBtn = document.getElementById('shareMobileBtn');
+            if (shareBtn) {
+                shareBtn.style.display = navigator.share ? 'inline-flex' : 'none';
+            }
+
             // Character counter
             updateCharCounter(text, config);
 
@@ -2150,6 +2537,43 @@ IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-comme
             section.classList.add('visible');
             section.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+
+        window.displayOutputGrouped = function() {
+            // Render tabs
+            const tabsContainer = document.getElementById('outputTabs');
+            if (tabsContainer && state.selectedPlatforms && state.selectedPlatforms.length > 0) {
+                tabsContainer.innerHTML = state.selectedPlatforms.map(pKey => {
+                    const p = PLATFORMS[pKey];
+                    const activeClass = pKey === state.currentPlatform ? 'active' : '';
+                    return `
+                        <div class="output-tab ${activeClass}" onclick="switchOutputTab('${pKey}')">
+                            <span>${p.icon}</span>
+                            <span>${p.name}</span>
+                        </div>
+                    `;
+                }).join('');
+                tabsContainer.style.display = state.selectedPlatforms.length > 1 ? 'flex' : 'none';
+            }
+
+            // Display current platform post
+            displayOutput(state.currentPlatform, state.generatedPosts[state.currentPlatform]);
+        };
+
+        window.switchOutputTab = function(platformKey) {
+            // Save active edits if in edit mode
+            if (state.isEditing) {
+                const editArea = document.getElementById('editArea');
+                if (editArea) {
+                    state.generatedPosts[state.currentPlatform] = editArea.value;
+                }
+            }
+
+            state.currentPlatform = platformKey;
+            state.generatedPost = state.generatedPosts[platformKey];
+
+            // Re-render tab headers to reflect active tab
+            displayOutputGrouped();
+        };
 
         function updateCharCounter(text, config) {
             const len = text.length;
@@ -2179,8 +2603,95 @@ IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-comme
         }
 
         // ============================================
-        // OUTPUT ACTIONS
+        // QUICK-POST & WEB SHARE ACTIONS
         // ============================================
+        window.quickPost = async function() {
+            const platformKey = state.currentPlatform;
+            const config = PLATFORMS[platformKey];
+            if (!config) return;
+
+            const text = state.generatedPost;
+            const encodedText = encodeURIComponent(text);
+
+            switch (platformKey) {
+                case 'twitter':
+                    window.open(`https://twitter.com/intent/tweet?text=${encodedText}`, '_blank');
+                    showToast('🐦 Opening Twitter / X composer...');
+                    break;
+                case 'whatsapp':
+                    window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
+                    showToast('💬 Opening WhatsApp Share...');
+                    break;
+                case 'telegram':
+                    window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.origin)}&text=${encodedText}`, '_blank');
+                    showToast('✈️ Opening Telegram Share...');
+                    break;
+                case 'threads':
+                    window.open(`https://threads.net/intent/post?text=${encodedText}`, '_blank');
+                    showToast('🔗 Opening Threads composer...');
+                    break;
+                case 'facebook':
+                    navigator.clipboard.writeText(text)
+                        .then(() => showToast('📋 Post copied! Opening Facebook...'))
+                        .catch(() => showToast('⚠️ Opening Facebook... please copy manually!'));
+                    window.open('https://www.facebook.com/', '_blank');
+                    break;
+                case 'instagram':
+                    navigator.clipboard.writeText(text)
+                        .then(() => showToast('📋 Caption copied! Opening Instagram...'))
+                        .catch(() => showToast('⚠️ Opening Instagram... please copy manually!'));
+                    window.open('https://www.instagram.com/', '_blank');
+                    break;
+                case 'linkedin':
+                    navigator.clipboard.writeText(text)
+                        .then(() => showToast('📋 Post copied! Opening LinkedIn...'))
+                        .catch(() => showToast('⚠️ Opening LinkedIn... please copy manually!'));
+                    window.open('https://www.linkedin.com/feed/', '_blank');
+                    break;
+                case 'youtube':
+                    navigator.clipboard.writeText(text)
+                        .then(() => showToast('📋 Post copied! Opening YouTube Community tab...'))
+                        .catch(() => showToast('⚠️ Opening YouTube... please copy manually!'));
+                    window.open('https://www.youtube.com/', '_blank');
+                    break;
+                case 'pinterest':
+                    navigator.clipboard.writeText(text)
+                        .then(() => showToast('📋 Pin details copied! Opening Pinterest Pin Builder...'))
+                        .catch(() => showToast('⚠️ Opening Pinterest... please copy manually!'));
+                    window.open('https://pinterest.com/pin-builder/', '_blank');
+                    break;
+                case 'sharechat':
+                    navigator.clipboard.writeText(text)
+                        .then(() => showToast('📋 Post copied! Opening ShareChat...'))
+                        .catch(() => showToast('⚠️ Opening ShareChat... please copy manually!'));
+                    window.open('https://sharechat.com/', '_blank');
+                    break;
+                default:
+                    copyPost();
+                    break;
+            }
+        };
+
+        window.sharePostMobile = async function() {
+            const text = state.generatedPost;
+            const platformKey = state.currentPlatform;
+            const config = PLATFORMS[platformKey];
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: `SocialCraft AI — Draft for ${config?.name || 'Social Media'}`,
+                        text: text
+                    });
+                    showToast('📲 Shared successfully!');
+                } catch (err) {
+                    console.log('Mobile share cancelled or failed:', err);
+                }
+            } else {
+                showToast('❌ Share not supported on this browser.', 'error');
+            }
+        };
+
         window.copyPost = async function() {
             const text = state.generatedPost;
             try {
@@ -2190,7 +2701,7 @@ IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-comme
                 btn.textContent = '✅ Copied!';
                 setTimeout(() => {
                     btn.classList.remove('success-flash');
-                    btn.textContent = '📋 Copy to Clipboard';
+                    btn.textContent = '📋 Copy Post';
                 }, 2000);
                 showToast('📋 Copied to clipboard!');
             } catch {
@@ -2225,6 +2736,7 @@ IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-comme
                 const editArea = document.getElementById('editArea');
                 if (editArea) {
                     state.generatedPost = editArea.value;
+                    state.generatedPosts[state.currentPlatform] = editArea.value;
                 }
                 body.classList.remove('editing');
                 body.textContent = state.generatedPost;
@@ -2240,6 +2752,7 @@ IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-comme
             const editArea = document.getElementById('editArea');
             if (editArea) {
                 state.generatedPost = editArea.value;
+                state.generatedPosts[state.currentPlatform] = editArea.value;
                 const config = PLATFORMS[state.currentPlatform];
                 if (config) updateCharCounter(state.generatedPost, config);
             }
@@ -2260,20 +2773,20 @@ IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-comme
         // ============================================
         // HISTORY MANAGEMENT
         // ============================================
-        function saveToHistory(platformKey, post, description) {
+        window.saveToHistoryGrouped = function(description) {
             const entry = {
-                platform: platformKey,
-                post,
-                description: description.substring(0, 100),
+                id: Date.now(),
                 date: new Date().toISOString(),
-                id: Date.now()
+                description: description.substring(0, 100),
+                posts: { ...state.generatedPosts }, 
+                platforms: [ ...state.selectedPlatforms ] 
             };
 
             state.history.unshift(entry);
             if (state.history.length > 20) state.history = state.history.slice(0, 20);
             localStorage.setItem('post_history', JSON.stringify(state.history));
             renderHistory();
-        }
+        };
 
         function renderHistory() {
             const list = document.getElementById('historyList');
@@ -2288,17 +2801,35 @@ IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-comme
             }
 
             list.innerHTML = state.history.map((h) => {
-                const config = PLATFORMS[h.platform] || {};
                 const date = new Date(h.date);
                 const dateStr = date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
                 const timeStr = date.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
 
+                let isGrouped = typeof h.posts === 'object' && h.posts !== null;
+                let platformsCount = 1;
+                let platformText = '';
+                let previewText = '';
+
+                if (isGrouped) {
+                    const keys = Object.keys(h.posts);
+                    platformsCount = keys.length;
+                    platformText = keys.map(k => PLATFORMS[k]?.icon || '📱').join(' ');
+                    previewText = h.posts[keys[0]] || '';
+                } else {
+                    const config = PLATFORMS[h.platform] || {};
+                    platformText = `${config.icon || '📱'} ${config.name || h.platform}`;
+                    previewText = h.post || '';
+                }
+
+                const platformsBadge = platformsCount > 1 ? `<span style="font-size: 10px; padding: 2px 6px; background: var(--accent-primary-glow); color: var(--accent-primary); border-radius: 10px; font-weight:700;">${platformsCount} platforms</span>` : '';
+
                 return `<div class="history-item" onclick="loadHistoryItem(${h.id})">
                     <div class="history-item-header">
-                        <span class="history-item-platform">${config.icon || '📱'} ${config.name || h.platform}</span>
+                        <span class="history-item-platform">${platformText} ${platformsBadge}</span>
                         <span class="history-item-date">${dateStr} ${timeStr}</span>
                     </div>
-                    <p class="history-item-preview">${escapeHtml(h.post)}</p>
+                    <p style="font-size:11px; color:var(--text-tertiary); font-style:italic; margin-bottom:4px;">"${escapeHtml(h.description)}"</p>
+                    <p class="history-item-preview">${escapeHtml(previewText)}</p>
                 </div>`;
             }).join('') + `<button class="history-clear-btn" onclick="clearHistory()">🗑️ Clear All History</button>`;
         }
@@ -2307,15 +2838,42 @@ IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-comme
             const item = state.history.find(h => h.id === id);
             if (!item) return;
 
-            state.generatedPost = item.post;
-            state.currentPlatform = item.platform;
+            let isGrouped = typeof item.posts === 'object' && item.posts !== null;
 
-            // Set platform selector
-            document.getElementById('platformSelect').value = item.platform;
-            document.getElementById('platformSelect').dispatchEvent(new Event('change'));
+            if (isGrouped) {
+                state.generatedPosts = { ...item.posts };
+                state.selectedPlatforms = [ ...item.platforms ];
+                state.currentPlatform = state.selectedPlatforms[0];
+                state.generatedPost = state.generatedPosts[state.currentPlatform];
+            } else {
+                // Fallback for older history format
+                state.generatedPosts = { [item.platform]: item.post };
+                state.selectedPlatforms = [item.platform];
+                state.currentPlatform = item.platform;
+                state.generatedPost = item.post;
+            }
 
-            displayOutput(item.platform, item.post);
+            // Sync Checkboxes UI
+            Object.keys(PLATFORMS).forEach(key => {
+                const cb = document.getElementById(`cb-${key}`);
+                const card = document.getElementById(`card-${key}`);
+                if (cb && card) {
+                    cb.checked = state.selectedPlatforms.includes(key);
+                    if (cb.checked) {
+                        card.classList.add('selected');
+                    } else {
+                        card.classList.remove('selected');
+                    }
+                }
+            });
+
+            updateSteps();
+            validateGenerate();
+            updatePlatformInfo();
+
+            displayOutputGrouped();
             toggleHistory();
+            showToast('📜 Loaded draft from history!');
         };
 
         window.clearHistory = function() {

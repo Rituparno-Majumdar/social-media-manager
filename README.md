@@ -77,8 +77,8 @@ Each platform is configured with custom, targeted prompt blueprints matching the
 
 1. **Clone or Download the Repository**:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/social-media-manager.git
-   cd social-media-manager
+   git clone https://github.com/YOUR_USERNAME/social-craft-ai.git
+   cd social-craft-ai
    ```
 2. **Open the App**:
    Double click the `index.html` file to open it in Chrome, Edge, Safari, or Firefox. No local servers are required!
@@ -108,20 +108,20 @@ Many developers think that storing an API key in a `.env` file is standard. Howe
 
 Because **SocialCraft AI** is a pure static page, you can host it for free on GitHub Pages in under **30 seconds**!
 
-1. Create a new, blank repository on GitHub (e.g., `social-media-manager`).
+1. Create a new, blank repository on GitHub (e.g., `social-craft-ai`).
 2. Push your files to the repository:
    ```bash
    git init
    git add .
    git commit -m "Initial release of SocialCraft AI"
-   git remote add origin https://github.com/YOUR_USERNAME/social-media-manager.git
+   git remote add origin https://github.com/YOUR_USERNAME/social-craft-ai.git
    git branch -M main
    git push -u origin main
    ```
 3. Go to your repository on **GitHub.com** → click **Settings** (⚙️) → **Pages** (in the left menu).
 4. Under **Build and deployment** → **Source**, select **Deploy from a branch**.
 5. Select **main** branch and **/** (root folder) and click **Save**.
-6. **Congratulations!** In 10 seconds, your site will be live at `https://YOUR_USERNAME.github.io/social-media-manager/` for anyone in your organization to use from their phone!
+6. **Congratulations!** In 10 seconds, your site will be live at `https://YOUR_USERNAME.github.io/social-craft-ai/` for anyone in your organization to use from their phone!
 
 ---
 
