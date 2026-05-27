@@ -1,0 +1,15 @@
+# SocialCraft AI Git Ignore
+
+# Local App Data / Agent Directories
+.antigravitycli/
+.gemini/
+brain/
+scratch/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Environments
+.env
+.env.local

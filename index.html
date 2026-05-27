@@ -1,0 +1,2539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered Social Media Post Generator for individuals, small businesses, and NGOs in India. Generate professional posts for Facebook, Instagram, Twitter, LinkedIn and more.">
+    <title>SocialCraft AI — Social Media Post Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           RESET & GLOBAL
+           ======================================== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            /* Dark Theme (default) */
+            --bg-primary: hsl(230, 25%, 7%);
+            --bg-secondary: hsl(230, 22%, 11%);
+            --bg-surface: hsl(230, 20%, 14%);
+            --bg-surface-hover: hsl(230, 20%, 18%);
+            --bg-surface-glass: hsla(230, 20%, 14%, 0.6);
+            --border-subtle: hsla(0, 0%, 100%, 0.06);
+            --border-glass: hsla(0, 0%, 100%, 0.1);
+            --accent-primary: hsl(250, 85%, 65%);
+            --accent-primary-hover: hsl(250, 85%, 72%);
+            --accent-primary-glow: hsla(250, 85%, 65%, 0.25);
+            --accent-secondary: hsl(170, 75%, 48%);
+            --accent-gradient: linear-gradient(135deg, hsl(250, 85%, 65%), hsl(200, 90%, 55%), hsl(170, 75%, 48%));
+            --accent-gradient-btn: linear-gradient(135deg, hsl(250, 85%, 60%), hsl(280, 75%, 55%), hsl(310, 70%, 55%));
+            --text-primary: hsl(0, 0%, 95%);
+            --text-secondary: hsl(230, 15%, 58%);
+            --text-tertiary: hsl(230, 15%, 42%);
+            --success: hsl(155, 70%, 45%);
+            --warning: hsl(38, 92%, 55%);
+            --error: hsl(0, 78%, 60%);
+            --shadow-lg: 0 20px 60px -15px hsla(230, 80%, 5%, 0.5);
+            --shadow-glow: 0 0 30px -5px var(--accent-primary-glow);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html[data-theme="light"] {
+            --bg-primary: hsl(220, 20%, 97%);
+            --bg-secondary: hsl(220, 18%, 93%);
+            --bg-surface: hsl(0, 0%, 100%);
+            --bg-surface-hover: hsl(220, 15%, 96%);
+            --bg-surface-glass: hsla(0, 0%, 100%, 0.7);
+            --border-subtle: hsla(230, 20%, 50%, 0.1);
+            --border-glass: hsla(230, 20%, 50%, 0.15);
+            --text-primary: hsl(230, 25%, 12%);
+            --text-secondary: hsl(230, 12%, 45%);
+            --text-tertiary: hsl(230, 10%, 62%);
+            --shadow-lg: 0 20px 60px -15px hsla(230, 40%, 50%, 0.15);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ========================================
+           PARTICLE BACKGROUND
+           ======================================== */
+        #particles-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* ========================================
+           SCROLLBAR
+           ======================================== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--text-tertiary); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+        /* ========================================
+           LAYOUT
+           ======================================== */
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+        }
+
+        /* ========================================
+           HEADER
+           ======================================== */
+        .header {
+            text-align: center;
+            padding: 40px 0 16px;
+            position: relative;
+        }
+
+        .header-controls {
+            position: absolute;
+            top: 40px; right: 0;
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            border: 1px solid var(--border-glass);
+            background: var(--bg-surface-glass);
+            backdrop-filter: blur(12px);
+            color: var(--text-secondary);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-surface-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-1px);
+        }
+
+        .app-logo {
+            font-size: 48px;
+            margin-bottom: 8px;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .app-title {
+            font-size: clamp(28px, 5vw, 40px);
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            line-height: 1.2;
+        }
+
+        .app-subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+
+        /* ========================================
+           STEP INDICATOR
+           ======================================== */
+        .steps-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin: 32px 0 28px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-circle {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--border-glass);
+            background: var(--bg-surface);
+            color: var(--text-tertiary);
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-normal);
+            flex-shrink: 0;
+        }
+
+        .step-circle.active {
+            border-color: var(--accent-primary);
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 0 20px var(--accent-primary-glow);
+        }
+
+        .step-circle.completed {
+            border-color: var(--success);
+            background: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            transition: color var(--transition-normal);
+            display: none;
+        }
+
+        .step-item.active .step-label,
+        .step-item.completed .step-label {
+            color: var(--text-primary);
+        }
+
+        .step-connector {
+            width: 50px;
+            height: 2px;
+            background: var(--border-glass);
+            margin: 0 8px;
+            border-radius: 1px;
+            transition: background var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-connector.active::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            width: 100%;
+            background: var(--accent-primary);
+            animation: fillConnector 0.5s ease forwards;
+        }
+
+        @keyframes fillConnector { from { width: 0; } to { width: 100%; } }
+
+        /* ========================================
+           CARDS (Glassmorphism)
+           ======================================== */
+        .card {
+            background: var(--bg-surface-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, hsla(0,0%,100%,0.12), transparent);
+        }
+
+        .card:hover {
+            border-color: hsla(0, 0%, 100%, 0.14);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 44px; height: 44px;
+            border-radius: var(--radius-md);
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* ========================================
+           PHOTO UPLOAD
+           ======================================== */
+        .upload-zone {
+            border: 2px dashed var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+            background: hsla(250, 50%, 50%, 0.03);
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--accent-primary);
+            background: hsla(250, 50%, 50%, 0.08);
+            box-shadow: inset 0 0 30px hsla(250, 85%, 65%, 0.05);
+        }
+
+        .upload-zone.dragover { transform: scale(1.01); }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+            opacity: 0.7;
+        }
+
+        .upload-text { color: var(--text-secondary); font-size: 15px; }
+        .upload-text strong { color: var(--accent-primary); }
+        .upload-hint { color: var(--text-tertiary); font-size: 12px; margin-top: 8px; }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .photo-thumb {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 2px solid var(--border-glass);
+            transition: all var(--transition-fast);
+        }
+
+        .photo-thumb:hover { border-color: var(--accent-primary); }
+
+        .photo-thumb img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: 4px; right: 4px;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            background: hsla(0, 78%, 55%, 0.9);
+            border: none;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        .photo-thumb:hover .photo-remove { opacity: 1; }
+
+        .photo-count {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 8px;
+            text-align: right;
+        }
+
+        /* ========================================
+           FORM ELEMENTS
+           ======================================== */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .form-row.single { grid-template-columns: 1fr; }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-label .label-icon { font-size: 15px; }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: all var(--transition-fast);
+            outline: none;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-primary-glow);
+        }
+
+        textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+
+        .char-counter {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        /* ========================================
+           PLATFORM SELECTOR
+           ======================================== */
+        .platform-select-wrapper { position: relative; }
+
+        .platform-option { display: flex; align-items: center; gap: 8px; }
+
+        /* ========================================
+           GENERATE BUTTON
+           ======================================== */
+        .generate-btn {
+            width: 100%;
+            padding: 16px 32px;
+            border: none;
+            border-radius: var(--radius-lg);
+            background: var(--accent-gradient-btn);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-normal);
+            margin-top: 16px;
+            letter-spacing: 0.3px;
+        }
+
+        .generate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, hsla(0,0%,100%,0.15), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .generate-btn:hover::before { left: 100%; }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px hsla(270, 70%, 50%, 0.35);
+        }
+
+        .generate-btn:active { transform: translateY(0); }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .generate-btn .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .generate-btn .spinner {
+            display: none;
+            width: 20px; height: 20px;
+            border: 2px solid hsla(0,0%,100%,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .generate-btn.loading .spinner { display: inline-block; }
+        .generate-btn.loading .btn-text { display: none; }
+        .generate-btn.loading .btn-loading-text { display: inline; }
+        .btn-loading-text { display: none; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ========================================
+           OUTPUT SECTION
+           ======================================== */
+        .output-section {
+            display: none;
+            animation: slideUp 0.5s ease;
+        }
+
+        .output-section.visible { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .platform-preview {
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .preview-header {
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+        }
+
+        .preview-header .platform-icon-lg { font-size: 22px; }
+
+        .preview-body {
+            background: var(--bg-secondary);
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Inter', sans-serif;
+            min-height: 120px;
+            position: relative;
+        }
+
+        .preview-body.editing {
+            padding: 0;
+        }
+
+        .preview-body textarea.edit-area {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.7;
+            resize: vertical;
+            border-radius: 0;
+        }
+
+        /* Platform-specific colors */
+        .preview-facebook .preview-header { background: #1877F2; }
+        .preview-instagram .preview-header { background: linear-gradient(135deg, #833AB4, #FD1D1D, #F77737); }
+        .preview-twitter .preview-header { background: #000000; }
+        .preview-linkedin .preview-header { background: #0A66C2; }
+        .preview-whatsapp .preview-header { background: #25D366; color: #fff; }
+        .preview-youtube .preview-header { background: #FF0000; }
+        .preview-sharechat .preview-header { background: linear-gradient(135deg, #FF6B35, #FFD23F); }
+        .preview-threads .preview-header { background: #000000; }
+        .preview-pinterest .preview-header { background: #E60023; }
+        .preview-telegram .preview-header { background: #0088CC; }
+
+        /* Character counter bar */
+        .char-bar-wrapper {
+            margin-bottom: 16px;
+        }
+
+        .char-bar-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+
+        .char-bar {
+            height: 6px;
+            background: var(--bg-secondary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .char-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width var(--transition-normal), background var(--transition-normal);
+        }
+
+        .char-bar-fill.green { background: var(--success); }
+        .char-bar-fill.yellow { background: var(--warning); }
+        .char-bar-fill.red { background: var(--error); }
+
+        /* Action buttons */
+        .output-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-glass);
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all var(--transition-fast);
+        }
+
+        .action-btn:hover {
+            background: var(--bg-surface-hover);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.primary {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .action-btn.primary:hover { background: var(--accent-primary-hover); }
+
+        .action-btn.success-flash {
+            background: var(--success) !important;
+            border-color: var(--success) !important;
+            color: white !important;
+        }
+
+        /* ========================================
+           SETTINGS MODAL
+           ======================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: hsla(230, 30%, 5%, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.visible { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 30px 80px hsla(230, 60%, 5%, 0.6);
+            animation: modalSlide 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .api-key-input-group {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .api-key-input-group input {
+            padding-right: 48px;
+        }
+
+        .toggle-visibility {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+        }
+
+        .setup-guide {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .setup-guide h4 {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--accent-primary);
+        }
+
+        .setup-guide ol {
+            padding-left: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .setup-guide li { margin-bottom: 8px; line-height: 1.5; }
+        .setup-guide a { color: var(--accent-primary); text-decoration: none; }
+        .setup-guide a:hover { text-decoration: underline; }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-actions button { flex: 1; }
+
+        .status-msg {
+            font-size: 13px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            margin-top: 12px;
+            display: none;
+        }
+
+        .status-msg.visible { display: block; }
+        .status-msg.success { background: hsla(155, 70%, 45%, 0.15); color: var(--success); }
+        .status-msg.error { background: hsla(0, 78%, 60%, 0.15); color: var(--error); }
+
+        /* ========================================
+           HISTORY DRAWER
+           ======================================== */
+        .history-drawer-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: hsla(230, 30%, 5%, 0.6);
+            z-index: 999;
+            display: none;
+        }
+
+        .history-drawer-overlay.visible { display: block; }
+
+        .history-drawer {
+            position: fixed;
+            top: 0; right: -420px;
+            width: 400px;
+            max-width: 90vw;
+            height: 100vh;
+            background: var(--bg-surface);
+            border-left: 1px solid var(--border-glass);
+            z-index: 1001;
+            padding: 24px;
+            overflow-y: auto;
+            transition: right var(--transition-normal);
+        }
+
+        .history-drawer.visible { right: 0; }
+
+        .history-drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .history-drawer-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .history-item {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all var(--transition-fast);
+        }
+
+        .history-item:hover {
+            border-color: var(--accent-primary);
+            background: var(--bg-surface-hover);
+        }
+
+        .history-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .history-item-platform {
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .history-item-date {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .history-item-preview {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .history-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        .history-clear-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 16px;
+            background: none;
+            border: 1px solid var(--error);
+            color: var(--error);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+        }
+
+        .history-clear-btn:hover {
+            background: hsla(0, 78%, 60%, 0.1);
+        }
+
+        /* ========================================
+           API KEY BANNER
+           ======================================== */
+        .api-banner {
+            background: linear-gradient(135deg, hsla(38, 92%, 55%, 0.12), hsla(38, 92%, 55%, 0.05));
+            border: 1px solid hsla(38, 92%, 55%, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--warning);
+        }
+
+        .api-banner.hidden { display: none; }
+
+        .api-banner button {
+            background: var(--warning);
+            border: none;
+            color: #1a1a1a;
+            padding: 6px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ========================================
+           LOADING MESSAGES
+           ======================================== */
+        .loading-messages {
+            text-align: center;
+            padding: 12px;
+            font-size: 13px;
+            color: var(--accent-primary);
+            font-weight: 500;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ========================================
+           FOOTER
+           ======================================== */
+        .footer {
+            text-align: center;
+            padding: 32px 0 16px;
+            color: var(--text-tertiary);
+            font-size: 12px;
+        }
+
+        .footer a { color: var(--accent-primary); text-decoration: none; }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 640px) {
+            .app-container { padding: 16px 14px 40px; }
+            .card { padding: 20px; border-radius: var(--radius-lg); }
+            .header-controls { top: 16px; right: 4px; }
+            .form-row { grid-template-columns: 1fr; }
+            .output-actions { flex-direction: column; }
+            .action-btn { justify-content: center; }
+            .step-label { display: none !important; }
+            .step-connector { width: 30px; }
+            .app-logo { font-size: 36px; }
+            .modal-content { padding: 24px; margin: 12px; }
+        }
+
+        @media (min-width: 641px) {
+            .step-label { display: block; }
+        }
+
+        /* ========================================
+           TOAST
+           ======================================== */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-lg);
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @keyframes toastIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastOut { to { opacity: 0; transform: translateX(30px); } }
+
+        /* ========================================
+           ONBOARDING
+           ======================================== */
+        .onboarding-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--accent-primary-glow);
+            color: var(--accent-primary);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-left: 8px;
+        }
+
+        /* Utility */
+        .visually-hidden { 
+            position: absolute; width: 1px; height: 1px; 
+            overflow: hidden; clip: rect(0,0,0,0); 
+            white-space: nowrap; border: 0; 
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background -->
+    <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content" role="dialog" aria-labelledby="modalTitle">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <h2 class="modal-title" id="modalTitle">⚙️ API Settings</h2>
+                <button class="icon-btn" onclick="toggleSettings()" aria-label="Close settings">✕</button>
+            </div>
+            <p class="modal-subtitle">Enter your Google Gemini API key to power the AI post generator.</p>
+
+            <div class="form-group">
+                <label class="form-label" for="apiKeyInput">
+                    <span class="label-icon">🔑</span> Gemini API Key
+                </label>
+                <div class="api-key-input-group">
+                    <input type="password" id="apiKeyInput" placeholder="Paste your API key here..." autocomplete="off">
+                    <button class="toggle-visibility" onclick="toggleKeyVisibility()" aria-label="Toggle key visibility" id="toggleVisBtn">👁️</button>
+                </div>
+            </div>
+
+            <div class="setup-guide">
+                <h4>📖 How to Get Your Free API Key</h4>
+                <ol>
+                    <li>Go to <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio → API Keys</a></li>
+                    <li>Sign in with your Google account</li>
+                    <li>Click <strong>"Create API Key"</strong></li>
+                    <li>Select any project (or create a new one)</li>
+                    <li>Copy the key and paste it above</li>
+                </ol>
+                <p style="margin-top:10px; font-size:12px; color:var(--text-tertiary);">✅ It's free • No credit card needed • Your key stays in your browser only</p>
+                <details style="margin-top: 15px; font-size: 13px; border-top: 1px dashed var(--border-color); padding-top: 10px; text-align: left;">
+                    <summary style="cursor:pointer; color:var(--accent-secondary); font-weight:600;">⚠️ Getting 503 Errors repeatedly?</summary>
+                    <div style="margin-top:8px; line-height:1.4; color:var(--text-secondary); font-size:12px;">
+                        <p style="margin-bottom:6px;"><strong>1. Network Firewall / Proxy:</strong> Office, school, or corporate firewalls often block direct browser calls to Google API endpoints (`generativelanguage.googleapis.com`) and return a 503 error. Try switching to a <strong>mobile hotspot</strong> or home Wi-Fi.</p>
+                        <p style="margin-bottom:6px;"><strong>2. Ad Blocker / Extensions:</strong> Aggressive privacy extensions can intercept and block API requests. Try running the app in an <strong>Incognito Window</strong> or temporarily pause ad blockers.</p>
+                        <p style="margin-bottom:6px;"><strong>3. Regional / VPN Block:</strong> If using a VPN, Google's rate-limiter may flag the IP. Try turning off your VPN or setting the location to India, US, or Singapore where the Gemini API is fully operational.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="status-msg" id="apiStatus"></div>
+
+            <div class="modal-actions">
+                <button class="action-btn" onclick="testApiKey()" id="testKeyBtn">🧪 Test Key</button>
+                <button class="action-btn primary" onclick="saveApiKey()" id="saveKeyBtn">💾 Save Key</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Drawer -->
+    <div class="history-drawer-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+    <div class="history-drawer" id="historyDrawer">
+        <div class="history-drawer-header">
+            <h3 class="history-drawer-title">📜 Post History</h3>
+            <button class="icon-btn" onclick="toggleHistory()" aria-label="Close history">✕</button>
+        </div>
+        <div id="historyList"></div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-controls">
+                <button class="icon-btn" onclick="toggleHistory()" aria-label="View post history" title="Post History">📜</button>
+                <button class="icon-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Theme" id="themeToggleBtn">🌙</button>
+                <button class="icon-btn" onclick="toggleSettings()" aria-label="API Settings" title="Settings">⚙️</button>
+            </div>
+            <span class="app-logo" role="img" aria-label="Sparkle">✨</span>
+            <h1 class="app-title">SocialCraft AI</h1>
+            <p class="app-subtitle">Transform your activities into professional social media posts — powered by AI</p>
+        </header>
+
+        <!-- API Key Banner -->
+        <div class="api-banner" id="apiBanner">
+            <span>⚠️</span>
+            <span style="flex:1">Set up your free Gemini API key to start generating posts</span>
+            <button onclick="toggleSettings()">Set Up Key</button>
+        </div>
+
+        <!-- Step Indicator -->
+        <div class="steps-indicator" role="navigation" aria-label="Progress steps">
+            <div class="step-item active" id="step1Item">
+                <div class="step-circle active" id="step1Circle">1</div>
+                <span class="step-label">Photos</span>
+            </div>
+            <div class="step-connector" id="conn1"></div>
+            <div class="step-item" id="step2Item">
+                <div class="step-circle" id="step2Circle">2</div>
+                <span class="step-label">Details</span>
+            </div>
+            <div class="step-connector" id="conn2"></div>
+            <div class="step-item" id="step3Item">
+                <div class="step-circle" id="step3Circle">3</div>
+                <span class="step-label">Generate</span>
+            </div>
+        </div>
+
+        <!-- Section 1: Photo Upload -->
+        <section class="card" id="photoSection" aria-labelledby="photoTitle">
+            <div class="card-header">
+                <div class="card-icon">📸</div>
+                <div>
+                    <h2 class="card-title" id="photoTitle">Upload Photos</h2>
+                    <p class="card-description">Add photos of your event or activity (optional, up to 5)</p>
+                </div>
+            </div>
+
+            <div class="upload-zone" id="uploadZone" role="button" tabindex="0" aria-label="Upload photos by clicking or dropping files">
+                <span class="upload-icon">☁️</span>
+                <p class="upload-text"><strong>Drag & drop</strong> your photos here</p>
+                <p class="upload-text">or <strong>click to browse</strong></p>
+                <p class="upload-hint">JPG, PNG, WEBP • Max 5 MB each • Up to 5 photos</p>
+            </div>
+            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple class="visually-hidden">
+
+            <div class="photo-grid" id="photoGrid"></div>
+            <p class="photo-count" id="photoCount"></p>
+        </section>
+
+        <!-- Section 2: Activity Details -->
+        <section class="card" id="detailsSection" aria-labelledby="detailsTitle">
+            <div class="card-header">
+                <div class="card-icon">📝</div>
+                <div>
+                    <h2 class="card-title" id="detailsTitle">Describe Your Activity</h2>
+                    <p class="card-description">Tell us about your event in simple, everyday language</p>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="eventDate"><span class="label-icon">📅</span> Date</label>
+                    <input type="date" id="eventDate">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="eventTime"><span class="label-icon">🕐</span> Time</label>
+                    <input type="time" id="eventTime">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="eventVenue"><span class="label-icon">📍</span> Venue / Location</label>
+                    <input type="text" id="eventVenue" placeholder="e.g., Town Hall, Pune">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="postLanguage"><span class="label-icon">🌐</span> Post Language</label>
+                    <select id="postLanguage">
+                        <option value="English">English</option>
+                        <option value="Hindi (हिन्दी)">हिन्दी (Hindi)</option>
+                        <option value="Bengali (বাংলা)">বাংলা (Bengali)</option>
+                        <option value="Tamil (தமிழ்)">தமிழ் (Tamil)</option>
+                        <option value="Telugu (తెలుగు)">తెలుగు (Telugu)</option>
+                        <option value="Marathi (मराठी)">मराठी (Marathi)</option>
+                        <option value="Gujarati (ગુજરાતી)">ગુજરાતી (Gujarati)</option>
+                        <option value="Kannada (ಕನ್ನಡ)">ಕನ್ನಡ (Kannada)</option>
+                        <option value="Malayalam (മലയാളം)">മലയാളം (Malayalam)</option>
+                        <option value="Punjabi (ਪੰਜਾਬੀ)">ਪੰਜਾਬੀ (Punjabi)</option>
+                        <option value="Odia (ଓଡ଼ିଆ)">ଓଡ଼ିଆ (Odia)</option>
+                        <option value="Assamese (অসমীয়া)">অসমীয়া (Assamese)</option>
+                        <option value="Urdu (اردو)">اردو (Urdu)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row single">
+                <div class="form-group">
+                    <label class="form-label" for="eventDescription">
+                        <span class="label-icon">💬</span> Activity Description
+                        <span class="onboarding-badge">Write like you talk!</span>
+                    </label>
+                    <textarea id="eventDescription" placeholder="Describe your event or activity in simple words...&#10;&#10;Example: We organized a free health checkup camp at the community center. Around 200 people came. Doctors from City Hospital volunteered. We gave free medicines too." rows="5"></textarea>
+                    <p class="helper-text">💡 Don't worry about grammar or style — our AI will craft a professional post from your description!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Platform & Generate -->
+        <section class="card" id="platformSection" aria-labelledby="platformTitle">
+            <div class="card-header">
+                <div class="card-icon">🚀</div>
+                <div>
+                    <h2 class="card-title" id="platformTitle">Choose Platform & Generate</h2>
+                    <p class="card-description">Select where you want to post and we'll optimize the content</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="platformSelect"><span class="label-icon">📱</span> Social Media Platform</label>
+                <select id="platformSelect">
+                    <option value="">— Select a platform —</option>
+                    <option value="facebook">📘 Facebook</option>
+                    <option value="instagram">📸 Instagram</option>
+                    <option value="twitter">🐦 Twitter / X</option>
+                    <option value="linkedin">💼 LinkedIn</option>
+                    <option value="whatsapp">💬 WhatsApp Status</option>
+                    <option value="youtube">▶️ YouTube Community</option>
+                    <option value="sharechat">🟠 ShareChat</option>
+                    <option value="threads">🔗 Threads</option>
+                    <option value="pinterest">📌 Pinterest</option>
+                    <option value="telegram">✈️ Telegram Channel</option>
+                </select>
+            </div>
+
+            <div id="platformInfo" style="font-size:12px; color:var(--text-tertiary); margin-top:8px; min-height:18px;"></div>
+
+            <button class="generate-btn" id="generateBtn" onclick="generatePost()" disabled>
+                <span class="btn-content">
+                    <span class="spinner"></span>
+                    <span class="btn-text">✨ Generate Professional Post</span>
+                    <span class="btn-loading-text">🤖 AI is crafting your post...</span>
+                </span>
+            </button>
+
+            <div class="loading-messages" id="loadingMsg" style="display:none;"></div>
+        </section>
+
+        <!-- Section 4: Output -->
+        <section class="output-section" id="outputSection">
+            <div class="card" style="padding-bottom:20px;">
+                <div class="card-header">
+                    <div class="card-icon">🎉</div>
+                    <div>
+                        <h2 class="card-title">Your Generated Post</h2>
+                        <p class="card-description">Ready to copy and share!</p>
+                    </div>
+                </div>
+
+                <div class="platform-preview" id="platformPreview">
+                    <div class="preview-header" id="previewHeader">
+                        <span class="platform-icon-lg" id="previewPlatformIcon"></span>
+                        <span id="previewPlatformName"></span>
+                    </div>
+                    <div class="preview-body" id="previewBody"></div>
+                </div>
+
+                <div class="char-bar-wrapper" id="charBarWrapper">
+                    <div class="char-bar-info">
+                        <span id="charCount">0 characters</span>
+                        <span id="charLimit">Limit: 0</span>
+                    </div>
+                    <div class="char-bar">
+                        <div class="char-bar-fill green" id="charBarFill"></div>
+                    </div>
+                    <div id="charWarning" style="margin-top: 8px; color: var(--accent-error); font-size: 13px; font-weight: 600; display: none; text-align: left; padding: 4px 0;"></div>
+                </div>
+
+                <div class="output-actions">
+                    <button class="action-btn primary" onclick="copyPost()" id="copyBtn">📋 Copy to Clipboard</button>
+                    <button class="action-btn" onclick="regeneratePost()">🔄 Regenerate</button>
+                    <button class="action-btn" onclick="toggleEdit()" id="editBtn">✏️ Edit</button>
+                    <button class="action-btn" onclick="downloadPost()">💾 Download</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with ❤️ for Indian communities • Powered by <a href="https://aistudio.google.com/" target="_blank" rel="noopener">Google Gemini AI</a></p>
+            <p style="margin-top:4px;">Your API key and data stay in your browser — never sent to any third-party server.</p>
+        </footer>
+    </div>
+
+    <!-- ========================================
+         JAVASCRIPT
+         ======================================== -->
+    <script type="module">
+        import { GoogleGenAI } from 'https://esm.run/@google/genai';
+
+        // ============================================
+        // PLATFORM CONFIGURATION DATABASE
+        // ============================================
+        const PLATFORMS = {
+            facebook: {
+                name: 'Facebook',
+                icon: '📘',
+                charLimit: 63206,
+                displayLimit: 2000,
+                hashtagRange: '1-3',
+                maxHashtags: 5,
+                tone: 'Community-focused, warm, conversational, informative',
+                previewClass: 'preview-facebook',
+                format: `FORMAT RULES FOR FACEBOOK:
+- Write in a narrative, storytelling style
+- Start with a hook or powerful opening line
+- Use paragraphs — not bullet points
+- Use 2-4 relevant emojis naturally within text
+- Include 1-3 hashtags at the very end (never more than 5)
+- End with a community engagement call-to-action (ask a question, invite comments, encourage sharing)
+- For events: include date, time, venue clearly formatted
+- Optimal visible length is 125 characters before "See more" — make the first line count!
+- Tone: Friendly, warm, like talking to your community
+
+SEO FOR FACEBOOK:
+- Use primary keywords naturally in the first 2 lines (Facebook search indexes post text)
+- Include location name for local discoverability
+- Use searchable, specific hashtags (e.g., #PuneHealthCamp not just #Health)
+- Tag-worthy content gets more shares — write for shareability
+- Facebook algorithm rewards posts that spark conversations — end with a genuine question
+- Use keywords that your audience would search for on Facebook`
+            },
+            instagram: {
+                name: 'Instagram',
+                icon: '📸',
+                charLimit: 2200,
+                displayLimit: 2200,
+                hashtagRange: '3-5',
+                maxHashtags: 5,
+                tone: 'Casual, playful, visual-first, trendy, emoji-rich',
+                previewClass: 'preview-instagram',
+                format: `FORMAT RULES FOR INSTAGRAM:
+- CRITICAL: Maximum 5 hashtags total (this is a hard platform limit enforced since 2025!)
+- First line must be a compelling hook (only first 125 characters are visible before "...more")
+- Use emojis liberally throughout the caption (every 1-2 lines)
+- Use line breaks between paragraphs for readability
+- Place all 3-5 hashtags at the very end of the caption
+- Include a call-to-action: "Double tap if...", "Save this for later", "Tag someone who..."
+- Tone: Trendy, authentic, relatable, personality-driven
+- Use short punchy sentences
+- Can suggest "Drop a ❤️ in comments" or similar engagement hooks
+
+SEO FOR INSTAGRAM:
+- Instagram search now indexes caption text — embed primary keywords naturally in sentences
+- Use niche hashtags (10K-500K posts range) not oversaturated generic ones
+- Include location keywords in the caption (helps local discovery)
+- Use keywords in the first line since Instagram search previews the first line
+- Hashtags must be highly specific and relevant (e.g., #MumbaiNGO #FreeMedicalCamp)
+- Write for "saves" — the algorithm prioritizes save-worthy educational or actionable content
+- Alt-text keywords are indexed too — mention key visual elements in the caption`
+            },
+            twitter: {
+                name: 'Twitter / X',
+                icon: '🐦',
+                charLimit: 280,
+                displayLimit: 280,
+                hashtagRange: '1-2',
+                maxHashtags: 2,
+                tone: 'Witty, concise, punchy, timely, conversational',
+                previewClass: 'preview-twitter',
+                format: `FORMAT RULES FOR TWITTER / X:
+- CRITICAL: Strictly stay within 280 characters (including spaces, emojis, hashtags, and any URLs)
+- URLs count as 23 characters each
+- Use only 1-2 hashtags (3+ hurts engagement and may trigger spam filters)
+- Every word must earn its place — be ultra-concise
+- Start with a strong hook or statement
+- Use line breaks strategically for impact
+- Tone: Punchy, witty, opinion-driven, timely
+- Emojis are fine but use sparingly (1-2 max)
+- If the content is too rich for one tweet, suggest a thread format with "🧵 Thread:" prefix
+
+SEO FOR TWITTER / X:
+- Use 1-2 trending or high-volume hashtags relevant to the topic
+- Twitter search indexes full tweet text — include key terms naturally
+- Use specific keywords your target audience searches for
+- Tweets with engagement (replies, retweets) rank higher — write for conversation
+- Location mentions boost local discoverability`
+            },
+            linkedin: {
+                name: 'LinkedIn',
+                icon: '💼',
+                charLimit: 3000,
+                displayLimit: 3000,
+                hashtagRange: '3-5',
+                maxHashtags: 10,
+                tone: 'Professional, insightful, human, expert',
+                previewClass: 'preview-linkedin',
+                format: `FORMAT RULES FOR LINKEDIN:
+- First ~210 characters visible on mobile before "...see more" — make the hook powerful
+- Use short paragraphs (2-3 lines max)
+- Use line breaks generously for readability
+- Can use bullet points or numbered lists for key points
+- Place 3-5 hashtags in CamelCase at the end (e.g., #DigitalMarketing #SocialImpact)
+- Tone: Professional but human — share insights, personal POV, lessons learned
+- For NGOs: frame impact in numbers and outcomes
+- For businesses: add industry insight angle
+- End with a thoughtful question or call-to-action
+- Avoid buzzwords, corporate jargon, and AI-filler phrases
+
+SEO FOR LINKEDIN:
+- LinkedIn search indexes post text heavily — embed industry keywords in the first 3 lines
+- Use CamelCase hashtags that professionals actually search (e.g., #SocialEnterprise #CSR #CommunityHealth)
+- Include role-specific and industry terms that your target audience follows
+- LinkedIn algorithm rewards "dwell time" — write content that makes people stop scrolling and read
+- Posts with comments rank higher — ask a specific question that invites professional opinions
+- Use 1 broad industry hashtag + 2-3 niche hashtags for optimal reach`
+            },
+            whatsapp: {
+                name: 'WhatsApp Status',
+                icon: '💬',
+                charLimit: 700,
+                displayLimit: 700,
+                hashtagRange: '0',
+                maxHashtags: 0,
+                tone: 'Personal, brief, direct, forwarding-friendly',
+                previewClass: 'preview-whatsapp',
+                format: `FORMAT RULES FOR WHATSAPP STATUS:
+- Maximum 700 characters — keep it brief and impactful
+- NO hashtags (WhatsApp doesn't support them)
+- Write as if texting a friend or group — warm and personal
+- Use emojis naturally (2-4)
+- Include essential info: what, when, where
+- Make it forwarding-friendly — the message should make sense when shared
+- Can use bullet points with emojis as markers
+- For events: include a clear call-to-action (e.g., "Join us!" or "Spread the word!")
+- Tone: Personal, warm, direct, like a personal message
+
+SEO FOR WHATSAPP:
+- WhatsApp has no search/SEO in the traditional sense — optimize for SHAREABILITY instead
+- Write the message so it makes complete sense when forwarded to other groups/contacts
+- Include the organization name and location so recipients know the source
+- Keep it concise and scannable — forwarded messages get skimmed in 2 seconds
+- Include a clear "forward this" or "share with friends" nudge`
+            },
+            youtube: {
+                name: 'YouTube Community',
+                icon: '▶️',
+                charLimit: 1000,
+                displayLimit: 1000,
+                hashtagRange: '3-5',
+                maxHashtags: 5,
+                tone: 'Descriptive, engaging, community-building',
+                previewClass: 'preview-youtube',
+                format: `FORMAT RULES FOR YOUTUBE COMMUNITY POSTS:
+- Maximum 1,000 characters
+- Start with a hook that grabs attention
+- Use emojis as visual markers
+- Include 3-5 relevant hashtags
+- Encourage engagement: "What do you think?", poll-style questions
+- Can suggest a poll format with emoji options
+- Tone: Friendly, engaging, community-building
+- For events: frame as content teaser or announcement
+- End with engagement hook
+
+SEO FOR YOUTUBE COMMUNITY:
+- YouTube search indexes community post text — use relevant keywords
+- Hashtags in community posts are clickable and searchable
+- Use keywords your audience would search on YouTube
+- Engagement (likes, comments) on community posts boosts overall channel visibility
+- Include the topic/niche keywords in the first line`
+            },
+            sharechat: {
+                name: 'ShareChat',
+                icon: '🟠',
+                charLimit: 5000,
+                displayLimit: 2000,
+                hashtagRange: '5-10',
+                maxHashtags: 10,
+                tone: 'Casual, regional, culturally relatable, community-driven',
+                previewClass: 'preview-sharechat',
+                format: `FORMAT RULES FOR SHARECHAT:
+- Focus heavily on regional language and cultural relevance
+- Use 5-10 hashtags that include local/regional tags
+- Content should feel relatable to tier-2 and tier-3 city audiences
+- Keep language simple and conversational
+- Use culturally relevant emojis
+- Make content shareable on WhatsApp (many ShareChat users share to WhatsApp)
+- Tone: Casual, warm, community-oriented, locally relatable
+- For regional languages: write naturally in the script, avoid transliteration
+- Reference local culture, festivals, or community values when relevant
+
+SEO FOR SHARECHAT:
+- Use hashtags in BOTH the regional language AND English (e.g., #स्वास्थ्य #HealthCamp)
+- Include local city/district names in hashtags for local discovery
+- ShareChat's algorithm favors content with high shares — write for shareability
+- Use tags related to trending local topics, festivals, or cultural events
+- Regional language hashtags have far less competition — use them for better visibility`
+            },
+            threads: {
+                name: 'Threads',
+                icon: '🔗',
+                charLimit: 500,
+                displayLimit: 500,
+                hashtagRange: '1-3',
+                maxHashtags: 5,
+                tone: 'Conversational, community-oriented, discussion-friendly',
+                previewClass: 'preview-threads',
+                format: `FORMAT RULES FOR THREADS:
+- Maximum 500 characters for standard posts
+- Threads uses "topic tags" not traditional hashtags — weave them naturally
+- Use 1-3 topic tags maximum
+- Tone: Conversational, casual, like chatting with friends
+- Encourage discussion — ask open-ended questions
+- Keep it real and authentic — overly polished content underperforms
+- Emojis are welcome but don't overuse
+- Short, punchy sentences work best
+
+SEO FOR THREADS:
+- Topic tags serve as search/discovery entry points — choose 1-3 highly relevant ones
+- Threads search indexes post text — naturally embed keywords
+- Engagement quality matters — posts that start genuine discussions get boosted
+- Use specific topic tags (e.g., #CommunityService not just #Good)`
+            },
+            pinterest: {
+                name: 'Pinterest',
+                icon: '📌',
+                charLimit: 500,
+                displayLimit: 500,
+                hashtagRange: '2-5',
+                maxHashtags: 5,
+                tone: 'Inspirational, keyword-rich, aspirational',
+                previewClass: 'preview-pinterest',
+                format: `FORMAT RULES FOR PINTEREST:
+- Pinterest is a VISUAL SEARCH ENGINE — treat descriptions like SEO content
+- Pin Title: 40-60 characters, keyword-rich
+- Pin Description: up to 500 characters (optimal: 100-150)
+- First 50-60 characters are visible in the feed — front-load keywords
+- Write naturally but include searchable keywords
+- Use 2-5 hashtags or skip if keywords are strong enough
+- Include a clear CTA: "Click to learn more", "Save for later", "Try this idea"
+- Tone: Inspirational, aspirational, helpful
+- Generate BOTH a title and description, clearly labeled
+- Format: "📌 TITLE: [title]\\n\\n[description]\\n\\n[hashtags]"
+
+SEO FOR PINTEREST (CRITICAL — Pinterest IS a search engine):
+- Front-load the most important keyword in the TITLE
+- Use long-tail keywords naturally in the description (e.g., "free health checkup camp in Pune" not just "health")
+- Think about what people would type into Pinterest search to find this content
+- Include related keywords and synonyms — Pinterest matches semantically
+- Pin descriptions are indexed forever — write evergreen, keyword-rich descriptions
+- Include location + topic combination keywords (e.g., "community service ideas India")`
+            },
+            telegram: {
+                name: 'Telegram Channel',
+                icon: '✈️',
+                charLimit: 4096,
+                displayLimit: 4096,
+                hashtagRange: '3-5',
+                maxHashtags: 5,
+                tone: 'Informative, structured, well-formatted',
+                previewClass: 'preview-telegram',
+                format: `FORMAT RULES FOR TELEGRAM CHANNEL:
+- Maximum 4,096 characters
+- Telegram supports rich formatting — use it!
+- Use **bold** for headings and key info
+- Use bullet points with emojis for structured info
+- Include 3-5 hashtags
+- Organize information clearly with sections
+- Tone: Informative, structured, professional yet accessible
+- For events: create a structured announcement with clear sections (What, When, Where, Why)
+- End with a clear call-to-action
+- Can include links (they display with preview)
+
+SEO FOR TELEGRAM:
+- Telegram channel search indexes channel posts — use relevant keywords in bold headings
+- Hashtags in Telegram are clickable and searchable within the channel
+- Use descriptive hashtags that help subscribers find past posts (e.g., #HealthCamp #PuneEvents)
+- Well-structured posts with bold keywords get more forwards — increasing discoverability
+- Include the organization/brand name consistently for brand searchability`
+            }
+        };
+
+        // ============================================
+        // LOADING MESSAGES
+        // ============================================
+        const LOADING_MESSAGES = [
+            "🤖 AI is analyzing your activity...",
+            "✍️ Crafting the perfect words...",
+            "🎨 Adding creative flair...",
+            "📱 Optimizing for your platform...",
+            "#️⃣ Finding trending hashtags...",
+            "✨ Almost there — polishing the final draft...",
+            "🧠 Understanding your photos...",
+            "🚀 Making your post shine..."
+        ];
+
+        // ============================================
+        // APP STATE
+        // ============================================
+        let state = {
+            photos: [],          // { file, dataUrl, base64 }
+            generatedPost: '',
+            currentPlatform: '',
+            isEditing: false,
+            apiKey: localStorage.getItem('gemini_api_key') || '',
+            history: JSON.parse(localStorage.getItem('post_history') || '[]'),
+            theme: localStorage.getItem('theme') || 'dark'
+        };
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function init() {
+            // Apply saved theme
+            document.documentElement.setAttribute('data-theme', state.theme);
+            updateThemeButton();
+
+            // Check API key
+            if (state.apiKey) {
+                document.getElementById('apiBanner').classList.add('hidden');
+                document.getElementById('apiKeyInput').value = state.apiKey;
+            }
+
+            // Set default date to today
+            document.getElementById('eventDate').valueAsDate = new Date();
+
+            // Set default time to now
+            const now = new Date();
+            document.getElementById('eventTime').value =
+                String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+            // Setup event listeners
+            setupPhotoUpload();
+            setupFormValidation();
+            setupParticles();
+            renderHistory();
+            updateSteps();
+        }
+
+        // ============================================
+        // PHOTO UPLOAD
+        // ============================================
+        function setupPhotoUpload() {
+            const zone = document.getElementById('uploadZone');
+            const input = document.getElementById('fileInput');
+
+            zone.addEventListener('click', () => input.click());
+            zone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') input.click(); });
+
+            zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            input.addEventListener('change', (e) => handleFiles(e.target.files));
+        }
+
+        async function handleFiles(files) {
+            const maxFiles = 5;
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+
+            for (const file of files) {
+                if (state.photos.length >= maxFiles) {
+                    showToast('⚠️ Maximum 5 photos allowed', 'warning');
+                    break;
+                }
+                if (!allowed.includes(file.type)) {
+                    showToast(`❌ ${file.name} — unsupported format`, 'error');
+                    continue;
+                }
+                if (file.size > maxSize) {
+                    showToast(`❌ ${file.name} — exceeds 5 MB`, 'error');
+                    continue;
+                }
+
+                const dataUrl = await readFileAsDataUrl(file);
+                const base64 = dataUrl.split(',')[1];
+                state.photos.push({ file, dataUrl, base64, mimeType: file.type });
+            }
+
+            renderPhotos();
+            updateSteps();
+        }
+
+        function readFileAsDataUrl(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderPhotos() {
+            const grid = document.getElementById('photoGrid');
+            const count = document.getElementById('photoCount');
+
+            grid.innerHTML = state.photos.map((p, i) => `
+                <div class="photo-thumb">
+                    <img src="${p.dataUrl}" alt="Uploaded photo ${i + 1}">
+                    <button class="photo-remove" onclick="removePhoto(${i})" aria-label="Remove photo ${i + 1}">✕</button>
+                </div>
+            `).join('');
+
+            count.textContent = state.photos.length > 0 ? `${state.photos.length}/5 photos uploaded` : '';
+        }
+
+        window.removePhoto = function(index) {
+            state.photos.splice(index, 1);
+            renderPhotos();
+            updateSteps();
+        };
+
+        // ============================================
+        // FORM VALIDATION & STEP TRACKING
+        // ============================================
+        function setupFormValidation() {
+            const fields = ['eventDate', 'eventTime', 'eventVenue', 'eventDescription', 'platformSelect'];
+            fields.forEach(id => {
+                document.getElementById(id).addEventListener('input', () => {
+                    updateSteps();
+                    validateGenerate();
+                });
+                document.getElementById(id).addEventListener('change', () => {
+                    updateSteps();
+                    validateGenerate();
+                });
+            });
+
+            // Platform info display
+            document.getElementById('platformSelect').addEventListener('change', (e) => {
+                const p = PLATFORMS[e.target.value];
+                const info = document.getElementById('platformInfo');
+                if (p) {
+                    info.innerHTML = `<strong>${p.icon} ${p.name}:</strong> ${p.charLimit.toLocaleString()} chars • ${p.hashtagRange} hashtags • ${p.tone.split(',')[0]} tone`;
+                } else {
+                    info.textContent = '';
+                }
+            });
+        }
+
+        function updateSteps() {
+            const hasPhotos = state.photos.length > 0;
+            const desc = document.getElementById('eventDescription').value.trim();
+            const hasDetails = desc.length >= 10;
+            const hasPlatform = !!document.getElementById('platformSelect').value;
+
+            // Step 1
+            const s1 = document.getElementById('step1Circle');
+            const s1Item = document.getElementById('step1Item');
+            if (hasPhotos) { s1.classList.add('completed'); s1.classList.remove('active'); s1.textContent = '✓'; s1Item.classList.add('completed'); }
+            else { s1.classList.remove('completed'); s1.classList.add('active'); s1.textContent = '1'; s1Item.classList.remove('completed'); s1Item.classList.add('active'); }
+
+            // Step 2
+            const s2 = document.getElementById('step2Circle');
+            const s2Item = document.getElementById('step2Item');
+            const c1 = document.getElementById('conn1');
+            if (hasDetails) { s2.classList.add('completed'); s2.classList.remove('active'); s2.textContent = '✓'; s2Item.classList.add('completed'); c1.classList.add('active'); }
+            else if (hasPhotos || desc.length > 0) { s2.classList.remove('completed'); s2.classList.add('active'); s2.textContent = '2'; s2Item.classList.add('active'); s2Item.classList.remove('completed'); c1.classList.add('active'); }
+            else { s2.classList.remove('completed', 'active'); s2.textContent = '2'; s2Item.classList.remove('active', 'completed'); c1.classList.remove('active'); }
+
+            // Step 3
+            const s3 = document.getElementById('step3Circle');
+            const s3Item = document.getElementById('step3Item');
+            const c2 = document.getElementById('conn2');
+            if (hasPlatform && hasDetails) { s3.classList.add('active'); s3Item.classList.add('active'); c2.classList.add('active'); }
+            else { s3.classList.remove('active'); s3Item.classList.remove('active'); c2.classList.remove('active'); }
+        }
+
+        function validateGenerate() {
+            const desc = document.getElementById('eventDescription').value.trim();
+            const platform = document.getElementById('platformSelect').value;
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = !(desc.length >= 10 && platform && state.apiKey);
+        }
+
+        // ============================================
+        // AI CALL HELPER (RETRY + FALLBACK)
+        // ============================================
+        async function callWithRetryAndFallback(ai, contents, onModelChange) {
+            const models = [
+                { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
+                { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
+                { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' }
+            ];
+            let lastError = null;
+
+            for (const model of models) {
+                let retries = 2; // Try up to 2 times for each model
+                let delay = 1000;
+
+                if (onModelChange) {
+                    onModelChange(model.name);
+                }
+
+                while (retries >= 0) {
+                    try {
+                        console.log(`Attempting generation with model: ${model.id} (${retries} retries left)`);
+                        const response = await ai.models.generateContent({
+                            model: model.id,
+                            contents: contents
+                        });
+                        if (response && response.text) {
+                            return { response, modelUsed: model.name };
+                        }
+                    } catch (err) {
+                        lastError = err;
+                        const status = err.status || (err.message?.match(/status:\s*(\d+)/i) || [])[1];
+                        const isTransient = status === '503' || status === '500' || status === '429' ||
+                                            err.message?.includes('503') || 
+                                            err.message?.includes('500') || 
+                                            err.message?.includes('429') || 
+                                            err.message?.includes('overloaded') || 
+                                            err.message?.includes('Service Unavailable') ||
+                                            err.message?.includes('RESOURCE_EXHAUSTED');
+                        
+                        const isAuthError = err.message?.includes('API_KEY_INVALID') || 
+                                            err.message?.includes('401') || 
+                                            err.message?.includes('INVALID_ARGUMENT') ||
+                                            err.message?.includes('not found') ||
+                                            err.message?.includes('404');
+
+                        if (isAuthError) {
+                            throw err; // Stop immediately for auth/arg errors
+                        }
+
+                        if (isTransient && retries > 0) {
+                            console.warn(`Transient error on ${model.id}, retrying in ${delay}ms...`, err);
+                            if (onModelChange) {
+                                onModelChange(`${model.name} (Busy, retrying...)`);
+                            }
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            delay *= 1.5; // Exponential backoff
+                            retries--;
+                        } else {
+                            // Move to next model
+                            console.warn(`Model ${model.id} failed, moving to fallback.`, err);
+                            break;
+                        }
+                    }
+                }
+            }
+            throw lastError;
+        }
+
+        // ============================================
+        // AI POST GENERATION
+        // ============================================
+        window.generatePost = async function() {
+            const platform = document.getElementById('platformSelect').value;
+            const config = PLATFORMS[platform];
+            if (!config) return;
+
+            const date = document.getElementById('eventDate').value;
+            const time = document.getElementById('eventTime').value;
+            const venue = document.getElementById('eventVenue').value;
+            const language = document.getElementById('postLanguage').value;
+            const description = document.getElementById('eventDescription').value;
+
+            // UI: Loading state
+            const btn = document.getElementById('generateBtn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            const loadingMsg = document.getElementById('loadingMsg');
+            loadingMsg.style.display = 'block';
+
+            let msgIndex = 0;
+            loadingMsg.textContent = LOADING_MESSAGES[0];
+            const msgInterval = setInterval(() => {
+                msgIndex = (msgIndex + 1) % LOADING_MESSAGES.length;
+                if (!loadingMsg.innerHTML.includes('Calling AI')) {
+                    loadingMsg.textContent = LOADING_MESSAGES[msgIndex];
+                }
+            }, 2500);
+
+            try {
+                const ai = new GoogleGenAI({ apiKey: state.apiKey });
+
+                // Build the prompt
+                const prompt = buildPrompt(config, { date, time, venue, language, description });
+
+                // Build content parts (text + optional images)
+                const parts = [{ text: prompt }];
+
+                // Add images if available
+                for (const photo of state.photos) {
+                    parts.push({
+                        inlineData: {
+                            mimeType: photo.mimeType,
+                            data: photo.base64
+                        }
+                    });
+                }
+
+                // Call the robust API generation helper
+                const result = await callWithRetryAndFallback(ai, [{ role: 'user', parts }], (currentModelName) => {
+                    loadingMsg.innerHTML = `🤖 Calling AI using <strong>${currentModelName}</strong>...<br><span style="font-size: 0.85em; opacity: 0.8;">${LOADING_MESSAGES[msgIndex]}</span>`;
+                });
+
+                const response = result.response;
+                const generatedText = response.text.trim();
+                state.generatedPost = generatedText;
+                state.currentPlatform = platform;
+
+                // Save to history
+                saveToHistory(platform, generatedText, description);
+
+                // Display result
+                displayOutput(platform, generatedText);
+
+                showToast(`✅ Post generated successfully (via ${result.modelUsed})!`);
+
+            } catch (err) {
+                console.error('Generation error:', err);
+                let errorMsg = 'Failed to generate post. ';
+                if (err.message?.includes('API_KEY_INVALID') || err.message?.includes('401')) {
+                    errorMsg += 'Your API key appears to be invalid. Please check it in Settings.';
+                } else if (err.message?.includes('503') || err.message?.includes('Service Unavailable')) {
+                    errorMsg += 'Gemini servers are currently overloaded (503). Please try again in a few moments.';
+                } else if (err.message?.includes('429') || err.message?.includes('quota') || err.message?.includes('exhausted')) {
+                    errorMsg += 'Rate limit reached. Please wait a moment and try again.';
+                } else if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
+                    errorMsg += 'Network error. Please check your internet connection.';
+                } else {
+                    errorMsg += err.message || 'Please try again.';
+                }
+                showToast('❌ ' + errorMsg, 'error');
+            } finally {
+                clearInterval(msgInterval);
+                btn.classList.remove('loading');
+                loadingMsg.style.display = 'none';
+                validateGenerate();
+            }
+        };
+
+        function buildPrompt(config, details) {
+            const { date, time, venue, language, description } = details;
+
+            const formattedDate = date ? new Date(date + 'T00:00:00').toLocaleDateString('en-IN', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            }) : 'Not specified';
+
+            const formattedTime = time ? new Date('2000-01-01T' + time).toLocaleTimeString('en-IN', {
+                hour: 'numeric', minute: '2-digit', hour12: true
+            }) : 'Not specified';
+
+            let photoInstruction = '';
+            if (state.photos.length > 0) {
+                photoInstruction = `\n- Visual details from uploaded photo(s): Analyze the attached image and describe one key detail in the post naturally (e.g. describing the banner, group, or venue in 4-6 words).`;
+            }
+
+            const isShortForm = config.charLimit <= 500;
+
+            if (isShortForm) {
+                // Short-form platforms require ultra-strict prompts focusing ONLY on length and conciseness
+                return `You are a real person typing a fast, punchy post on your phone for ${config.name}.
+
+═══════════════════════════════════════════
+CRITICAL CHARACTER LIMIT RULE: UNDER ${config.charLimit} CHARACTERS
+═══════════════════════════════════════════
+- The ENTIRE generated output MUST be STICTLY less than ${config.charLimit} characters.
+- This includes ALL spaces, letters, emojis, and hashtags.
+- DO NOT WRITE A PARAGRAPH. Write a maximum of 1-2 ultra-short sentences.
+- Plan for a length of around ${Math.round(config.charLimit * 0.75)} characters to leave a safe buffer.
+- Under NO circumstances may you exceed ${config.charLimit} characters.
+
+PLATFORM: ${config.name}
+TARGET LANGUAGE: ${language} (Write in the native script directly. Do NOT use Latin/English transliteration for regional languages).
+
+FORMAT RULES:
+${config.format}
+
+ACTIVITY DETAILS:
+- Event: "${description}"
+- Date: ${formattedDate}
+- Time: ${formattedTime}
+- Location: ${venue || 'Not specified'}${photoInstruction}
+
+INSTRUCTIONS:
+1. Write 1 or 2 extremely short, engaging, human sentences.
+2. Use exactly ${config.hashtagRange} hashtags at the very end.
+3. Use a maximum of 1 emoji.
+4. Keep the tone conversational, witty, and punchy.
+5. Absolutely NO AI buzzwords ("delighted to share", "transformative", "excited to announce", "fostering").
+6. Output ONLY the raw post. Do not include quotes, comments, intro text, or markdown code block formatting. Just the post itself.`;
+            }
+
+            // Long-form platforms use the rich, detailed instructions
+            return `You are a real person who manages social media for a small organization in India. You write posts the way a passionate, articulate human would — NOT like an AI or a marketing agency. You have been doing this for years and know each platform inside out.
+
+PLATFORM: ${config.name}
+CHARACTER LIMIT: ${config.charLimit} characters maximum
+HASHTAG RULES: Use ${config.hashtagRange} hashtags (never exceed ${config.maxHashtags})
+
+${config.format}
+
+ACTIVITY DETAILS:
+- Date: ${formattedDate}
+- Time: ${formattedTime}
+- Venue/Location: ${venue || 'Not specified'}
+- Description (written by the user in simple language): "${description}"
+- Target Language for the post: ${language}
+${photoInstruction ? `\n\nPHOTO CONTEXT: ${state.photos.length} photo(s) have been attached. Please analyze these images and incorporate relevant visual details into the post (e.g., describe the crowd, venue, banners, activities visible). Make the post feel like it was written by someone who was THERE at the event.` : ''}
+
+═══════════════════════════════════════════
+CRITICAL RULE #1 — SOUND 100% HUMAN (NON-NEGOTIABLE)
+═══════════════════════════════════════════
+The post MUST read as if a real person typed it on their phone. Follow these rules strictly:
+
+DO:
+- Write like you are a REAL person sharing a genuine experience, not a copywriter
+- Use natural, conversational flow — the way someone actually talks
+- Vary sentence lengths wildly: mix short punchy lines with longer flowing ones
+- Include small human touches: personal reactions ("honestly, this was incredible"), observations ("the look on their faces was priceless"), sensory details ("the hall was packed, buzzing with energy")
+- Start some sentences with "And", "But", "So" — real people do this
+- Use contractions ("we're", "it's", "couldn't", "didn't") — formal writing is an AI tell
+- Occasionally use sentence fragments for emphasis. Like this. Works every time.
+- Add a personal touch — share how the event made YOU feel, what surprised you, what moved you
+- Use colloquial expressions and natural phrasing from the target language
+- For Indian regional languages: use common spoken-style phrases, local idioms, and culturally natural expressions — NOT textbook/formal language
+
+NEVER USE THESE AI-TELL WORDS/PHRASES (instant giveaway the post is AI-generated):
+- "delighted", "thrilled", "excited to announce", "excited to share"
+- "I'm pleased to", "we are proud to", "It gives us immense pleasure"
+- "leveraging", "fostering", "cultivating", "spearheading", "synergy"
+- "groundbreaking", "transformative", "cutting-edge", "game-changer"
+- "dive into", "delve into", "explore the", "unlock", "unleash"
+- "comprehensive", "robust", "seamless", "streamlined", "holistic"
+- "in today's fast-paced world", "in this day and age"
+- "make a difference", "create an impact" (say specifically WHAT the impact was instead)
+- "heartwarming", "awe-inspiring", "remarkable journey"
+- "a testament to", "a beacon of", "paving the way"
+- "at the end of the day", "when all is said and done"
+- "needless to say", "without further ado"
+- Starting with "🎉 We are excited to..." or "📢 Announcing..."
+
+INSTEAD, write like real humans do:
+- "This was something else" instead of "This was a groundbreaking event"
+- "We pulled it off!" instead of "We are delighted to announce the success of"
+- "200 people showed up — we didn't expect that many" instead of "We are thrilled to share that 200 attendees graced the event"
+- "Huge thanks to Dr. Sharma's team" instead of "We extend our heartfelt gratitude to"
+- "If you missed it, next one's coming soon" instead of "Stay tuned for more such transformative initiatives"
+
+═══════════════════════════════════════════
+CRITICAL RULE #2 — SEO OPTIMIZATION (NON-NEGOTIABLE)
+═══════════════════════════════════════════
+Every post must be optimized for maximum discoverability on ${config.name}:
+
+1. KEYWORD STRATEGY:
+   - Identify 2-3 primary keywords from the activity description (e.g., "free health camp", "tree plantation drive", "skill development workshop")
+   - Embed these keywords NATURALLY into the post text (never stuff them awkwardly)
+   - Include location keywords (city, area, landmark names) for local SEO
+   - Use keywords in the first 1-2 lines — most platform search engines weight the opening heavily
+
+2. HASHTAG SEO:
+   - Use SPECIFIC, searchable hashtags (e.g., #FreeHealthCheckup #PuneNGO) not generic ones (#love #happy #good)
+   - Mix 1 broad hashtag + remaining niche/specific hashtags
+   - For Indian posts: include hashtags in BOTH the post language AND English for cross-language discovery
+   - Use location-based hashtags (e.g., #Mumbai #DelhiEvents #KolkataNGO)
+
+3. DISCOVERABILITY SIGNALS:
+   - Write content that encourages saves, shares, and comments — these signal quality to algorithms
+   - Ask specific questions to drive comments (algorithms boost commented posts)
+   - Mention specific details (names, places, numbers) — this makes the post findable via specific searches
+   - For regional languages: include at least 1-2 English keywords/hashtags so the post is discoverable by non-native-language searchers too
+
+═══════════════════════════════════════════
+YOUR TASK
+═══════════════════════════════════════════
+1. Create ONE post for ${config.name} based on the activity details above
+2. Write the ENTIRE post in ${language} — use the native script (Devanagari for Hindi, Bengali script for Bengali, etc.). Do NOT use transliteration unless the language is English
+3. Follow ALL platform-specific format rules AND SEO rules above
+4. Stay within ${config.charLimit} characters
+5. The post MUST pass as human-written — if anyone suspects it's AI-generated, you have FAILED
+6. The post MUST be SEO-optimized for maximum discoverability on ${config.name}
+7. If this involves a social cause, NGO, or community event — share the real human impact with specific details
+8. Use emojis naturally (the way a real person would, not overdone)
+
+IMPORTANT: Return ONLY the post text. No explanations, no headers, no meta-commentary. Just the ready-to-copy post.`;
+        }
+
+        // ============================================
+        // OUTPUT DISPLAY
+        // ============================================
+        function displayOutput(platformKey, text) {
+            const config = PLATFORMS[platformKey];
+            const section = document.getElementById('outputSection');
+            const preview = document.getElementById('platformPreview');
+            const header = document.getElementById('previewHeader');
+            const body = document.getElementById('previewBody');
+
+            // Set platform styling
+            preview.className = `platform-preview ${config.previewClass}`;
+            document.getElementById('previewPlatformIcon').textContent = config.icon;
+            document.getElementById('previewPlatformName').textContent = config.name;
+
+            // Set content
+            body.textContent = text;
+            body.classList.remove('editing');
+            state.isEditing = false;
+            document.getElementById('editBtn').textContent = '✏️ Edit';
+
+            // Character counter
+            updateCharCounter(text, config);
+
+            // Show section with animation
+            section.classList.add('visible');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function updateCharCounter(text, config) {
+            const len = text.length;
+            const limit = config.charLimit;
+            const pct = Math.min((len / limit) * 100, 100);
+
+            document.getElementById('charCount').textContent = `${len.toLocaleString()} characters`;
+            document.getElementById('charLimit').textContent = `Limit: ${limit.toLocaleString()}`;
+
+            const fill = document.getElementById('charBarFill');
+            fill.style.width = pct + '%';
+            
+            const warningEl = document.getElementById('charWarning');
+            if (len > limit) {
+                fill.className = 'char-bar-fill red';
+                if (warningEl) {
+                    warningEl.style.display = 'block';
+                    warningEl.innerHTML = `⚠️ Exceeds character limit by <strong>${(len - limit).toLocaleString()}</strong> characters! Use the <strong>✏️ Edit</strong> button below to trim it down.`;
+                }
+            } else {
+                fill.className = 'char-bar-fill ' + (pct < 70 ? 'green' : pct < 90 ? 'yellow' : 'red');
+                if (warningEl) {
+                    warningEl.style.display = 'none';
+                    warningEl.innerHTML = '';
+                }
+            }
+        }
+
+        // ============================================
+        // OUTPUT ACTIONS
+        // ============================================
+        window.copyPost = async function() {
+            const text = state.generatedPost;
+            try {
+                await navigator.clipboard.writeText(text);
+                const btn = document.getElementById('copyBtn');
+                btn.classList.add('success-flash');
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('success-flash');
+                    btn.textContent = '📋 Copy to Clipboard';
+                }, 2000);
+                showToast('📋 Copied to clipboard!');
+            } catch {
+                // Fallback
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                showToast('📋 Copied to clipboard!');
+            }
+        };
+
+        window.regeneratePost = function() {
+            generatePost();
+        };
+
+        window.toggleEdit = function() {
+            const body = document.getElementById('previewBody');
+            const btn = document.getElementById('editBtn');
+
+            if (!state.isEditing) {
+                // Enter edit mode
+                body.classList.add('editing');
+                body.innerHTML = `<textarea class="edit-area" id="editArea" oninput="onEditInput()">${escapeHtml(state.generatedPost)}</textarea>`;
+                document.getElementById('editArea').focus();
+                btn.textContent = '💾 Save';
+                state.isEditing = true;
+            } else {
+                // Save edits
+                const editArea = document.getElementById('editArea');
+                if (editArea) {
+                    state.generatedPost = editArea.value;
+                }
+                body.classList.remove('editing');
+                body.textContent = state.generatedPost;
+                btn.textContent = '✏️ Edit';
+                state.isEditing = false;
+
+                const config = PLATFORMS[state.currentPlatform];
+                if (config) updateCharCounter(state.generatedPost, config);
+            }
+        };
+
+        window.onEditInput = function() {
+            const editArea = document.getElementById('editArea');
+            if (editArea) {
+                state.generatedPost = editArea.value;
+                const config = PLATFORMS[state.currentPlatform];
+                if (config) updateCharCounter(state.generatedPost, config);
+            }
+        };
+
+        window.downloadPost = function() {
+            const config = PLATFORMS[state.currentPlatform];
+            const blob = new Blob([state.generatedPost], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${config?.name || 'post'}_${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('💾 Post downloaded!');
+        };
+
+        // ============================================
+        // HISTORY MANAGEMENT
+        // ============================================
+        function saveToHistory(platformKey, post, description) {
+            const entry = {
+                platform: platformKey,
+                post,
+                description: description.substring(0, 100),
+                date: new Date().toISOString(),
+                id: Date.now()
+            };
+
+            state.history.unshift(entry);
+            if (state.history.length > 20) state.history = state.history.slice(0, 20);
+            localStorage.setItem('post_history', JSON.stringify(state.history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+
+            if (state.history.length === 0) {
+                list.innerHTML = `<div class="history-empty">
+                    <p style="font-size:32px; margin-bottom:12px;">📭</p>
+                    <p>No posts generated yet.</p>
+                    <p style="margin-top:4px; font-size:12px;">Your generated posts will appear here.</p>
+                </div>`;
+                return;
+            }
+
+            list.innerHTML = state.history.map((h) => {
+                const config = PLATFORMS[h.platform] || {};
+                const date = new Date(h.date);
+                const dateStr = date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                const timeStr = date.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+                return `<div class="history-item" onclick="loadHistoryItem(${h.id})">
+                    <div class="history-item-header">
+                        <span class="history-item-platform">${config.icon || '📱'} ${config.name || h.platform}</span>
+                        <span class="history-item-date">${dateStr} ${timeStr}</span>
+                    </div>
+                    <p class="history-item-preview">${escapeHtml(h.post)}</p>
+                </div>`;
+            }).join('') + `<button class="history-clear-btn" onclick="clearHistory()">🗑️ Clear All History</button>`;
+        }
+
+        window.loadHistoryItem = function(id) {
+            const item = state.history.find(h => h.id === id);
+            if (!item) return;
+
+            state.generatedPost = item.post;
+            state.currentPlatform = item.platform;
+
+            // Set platform selector
+            document.getElementById('platformSelect').value = item.platform;
+            document.getElementById('platformSelect').dispatchEvent(new Event('change'));
+
+            displayOutput(item.platform, item.post);
+            toggleHistory();
+        };
+
+        window.clearHistory = function() {
+            if (confirm('Are you sure you want to clear all post history?')) {
+                state.history = [];
+                localStorage.removeItem('post_history');
+                renderHistory();
+                showToast('🗑️ History cleared');
+            }
+        };
+
+        // ============================================
+        // SETTINGS MODAL
+        // ============================================
+        window.toggleSettings = function() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.toggle('visible');
+        };
+
+        window.toggleKeyVisibility = function() {
+            const input = document.getElementById('apiKeyInput');
+            const btn = document.getElementById('toggleVisBtn');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁️';
+            }
+        };
+
+        window.saveApiKey = function() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            if (!key) {
+                showApiStatus('Please enter an API key', 'error');
+                return;
+            }
+            state.apiKey = key;
+            localStorage.setItem('gemini_api_key', key);
+            document.getElementById('apiBanner').classList.add('hidden');
+            showApiStatus('✅ API key saved successfully!', 'success');
+            validateGenerate();
+
+            setTimeout(() => toggleSettings(), 1200);
+        };
+
+        window.testApiKey = async function() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            if (!key) {
+                showApiStatus('Please enter an API key first', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('testKeyBtn');
+            btn.textContent = '⏳ Testing...';
+            btn.disabled = true;
+
+            try {
+                const ai = new GoogleGenAI({ apiKey: key });
+                const result = await callWithRetryAndFallback(ai, 'Reply with just the word: OK', (currentModelName) => {
+                    showApiStatus(`🧪 Testing with ${currentModelName}...`, 'info');
+                });
+                showApiStatus(`✅ API key is valid! Connection successful (via ${result.modelUsed}).`, 'success');
+            } catch (err) {
+                showApiStatus('❌ Invalid API key or connection error: ' + (err.message || 'Unknown error'), 'error');
+            } finally {
+                btn.textContent = '🧪 Test Key';
+                btn.disabled = false;
+            }
+        };
+
+        function showApiStatus(msg, type) {
+            const el = document.getElementById('apiStatus');
+            el.textContent = msg;
+            el.className = `status-msg visible ${type}`;
+        }
+
+        // ============================================
+        // THEME TOGGLE
+        // ============================================
+        window.toggleTheme = function() {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', state.theme);
+            localStorage.setItem('theme', state.theme);
+            updateThemeButton();
+        };
+
+        function updateThemeButton() {
+            document.getElementById('themeToggleBtn').textContent = state.theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // ============================================
+        // HISTORY DRAWER
+        // ============================================
+        window.toggleHistory = function() {
+            document.getElementById('historyDrawer').classList.toggle('visible');
+            document.getElementById('historyOverlay').classList.toggle('visible');
+        };
+
+        // ============================================
+        // PARTICLE BACKGROUND
+        // ============================================
+        function setupParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+
+            let particles = [];
+            const PARTICLE_COUNT = 50;
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            function createParticle() {
+                return {
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2 + 0.5,
+                    speedX: (Math.random() - 0.5) * 0.3,
+                    speedY: (Math.random() - 0.5) * 0.3,
+                    opacity: Math.random() * 0.5 + 0.1
+                };
+            }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push(createParticle());
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const isDark = state.theme === 'dark';
+                const color = isDark ? '180, 180, 255' : '100, 100, 180';
+
+                particles.forEach(p => {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+
+                    if (p.x < 0) p.x = canvas.width;
+                    if (p.x > canvas.width) p.x = 0;
+                    if (p.y < 0) p.y = canvas.height;
+                    if (p.y > canvas.height) p.y = 0;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${color}, ${p.opacity})`;
+                    ctx.fill();
+                });
+
+                // Draw connections
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(${color}, ${0.06 * (1 - dist / 120)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            resize();
+            initParticles();
+            animate();
+
+            window.addEventListener('resize', () => {
+                resize();
+                initParticles();
+            });
+        }
+
+        // ============================================
+        // UTILITIES
+        // ============================================
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function showToast(message, type = 'default') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Close modal on overlay click
+        document.getElementById('settingsModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) toggleSettings();
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('settingsModal').classList.remove('visible');
+                document.getElementById('historyDrawer').classList.remove('visible');
+                document.getElementById('historyOverlay').classList.remove('visible');
+            }
+        });
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
